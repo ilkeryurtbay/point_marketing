@@ -7,5 +7,5 @@ class Company implements ISuggestionModel {
 
   factory Company.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
-      Company(name: json['title']);
+      Company(name: json['body']);
 }

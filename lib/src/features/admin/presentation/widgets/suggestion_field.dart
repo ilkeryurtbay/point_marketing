@@ -43,6 +43,7 @@ class _SuggestionFieldState<T extends ISuggestionModel>
       },
       noItemsFoundBuilder: (context) => const SizedBox(),
       debounceDuration: const Duration(milliseconds: 800),
+      autoFlipDirection: true,
     );
   }
 }
