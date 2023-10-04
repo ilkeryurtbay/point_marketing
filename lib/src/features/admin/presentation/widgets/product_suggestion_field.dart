@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
+import 'package:point_marketing/core/constants/app_string.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product.dart';
 import 'package:point_marketing/src/features/admin/data/entity/product_entity.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +26,10 @@ class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
   Widget build(BuildContext context) {
     return TypeAheadField<Product?>(
       textFieldConfiguration: TextFieldConfiguration(
-        controller: widget.controller,
-      ),
+          controller: widget.controller,
+          decoration: const InputDecoration(
+            labelText: AppString.product,
+          )),
       suggestionsCallback: (pattern) =>
           _getProductSuggestions(pattern, Product.fromJson),
       itemBuilder: (context, suggestion) {
@@ -46,8 +49,6 @@ class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
           //update the product in change notifier to make it ready to be added to the list view
           Provider.of<SelectedProduct>(context, listen: false).selectedProduct =
               suggestion;
-          print(
-              'product name under provider is: ${Provider.of<SelectedProduct>(context, listen: false).selectedProduct?.name}');
         });
       },
       noItemsFoundBuilder: (context) => const SizedBox(),

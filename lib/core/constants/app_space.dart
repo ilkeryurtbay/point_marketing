@@ -7,6 +7,9 @@ class AppSpace {
 }
 
 class _VerticalSpace {
+  final SizedBox space10 = const SizedBox(
+    height: 10,
+  );
   final SizedBox space20 = const SizedBox(
     height: 20,
   );
