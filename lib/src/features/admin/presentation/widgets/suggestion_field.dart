@@ -25,8 +25,8 @@ class _SuggestionFieldState<T extends ISuggestionModel>
       textFieldConfiguration: TextFieldConfiguration(
         controller: widget.controller,
         decoration: InputDecoration(
-          labelText: widget.labelText,
-        ),
+            labelText: widget.labelText,
+            suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined)),
       ),
       suggestionsCallback: widget.getSuggestionMethod,
       itemBuilder: (context, suggestion) {

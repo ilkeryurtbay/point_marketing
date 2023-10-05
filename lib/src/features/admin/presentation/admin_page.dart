@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
 import 'package:point_marketing/core/constants/app_string.dart';
+import 'package:point_marketing/core/util/build_context_extension.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product.dart';
-import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/city_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/company_entity.dart';
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
@@ -33,9 +33,9 @@ class _AdminPageState extends State<AdminPage> {
   late TextEditingController _marketController;
   late TextEditingController _companyController;
   late TextEditingController _productController;
-  late TextEditingController _agentController;
   late TextEditingController _countryController;
   late TextEditingController _cityController;
+  late TextEditingController _noteController;
 
   @override
   void initState() {
@@ -44,9 +44,9 @@ class _AdminPageState extends State<AdminPage> {
     _marketController = TextEditingController();
     _companyController = TextEditingController();
     _productController = TextEditingController();
-    _agentController = TextEditingController();
     _countryController = TextEditingController();
     _cityController = TextEditingController();
+    _noteController = TextEditingController();
   }
 
   @override
@@ -55,27 +55,42 @@ class _AdminPageState extends State<AdminPage> {
     _marketController.dispose();
     _companyController.dispose();
     _productController.dispose();
-    _agentController.dispose();
     _countryController.dispose();
     _cityController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     const double topListHeight = 160;
+    final roundedRectangleShapeDecoration = ShapeDecoration(
+        shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            borderRadius: BorderRadius.circular(8)));
     return Scaffold(
-      backgroundColor: Colors.teal,
-      body: SafeArea(
+      appBar: AppBar(
+        title: const Text(
+          AppString.addMission,
+        ),
+        leading: const _BackButton(),
+      ),
+      body: RawScrollbar(
+        thumbVisibility: true,
+        padding: AppPadding.onlyRight4,
+        thumbColor: context.mainThemeColor,
+        thickness: 5,
+        radius: const Radius.circular(10),
+        interactive: true,
         child: Padding(
-          padding: AppPadding.allSides24,
+          padding: AppPadding.pagePadding,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(AppString.addMission),
-                AppSpace.vertical.space20,
                 SizedBox(
                   height: topListHeight,
                   child: ListView.builder(
@@ -86,33 +101,28 @@ class _AdminPageState extends State<AdminPage> {
                         children: [
                           Column(
                             children: [
-                              Stack(
-                                children: [
-                                  SizedBox(
-                                    // height: topListHeight,
-                                    // width: topListHeight,
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.indigo,
-                                      radius: topListHeight / 3.25,
+                              SizedBox(
+                                height: topListHeight * 0.75,
+                                width: topListHeight * 0.75,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: CircleAvatar(
+                                        backgroundColor: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
+                                        radius: topListHeight / 3.25,
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                      right: 0,
-                                      child: Container(
-                                        height: 40,
-                                        width: 40,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.grey,
-                                        ),
-                                      ))
-                                ],
+                                    const Positioned(
+                                        right: 0, child: CheckCircle())
+                                  ],
+                                ),
                               ),
-                              AppSpace.vertical.space10,
-                              const Text('User Name'),
+                              const Text('Eleman Adı'),
                             ],
                           ),
-                          AppSpace.horizontal.space40,
+                          AppSpace.horizontal.space20,
                         ],
                       );
                     },
@@ -122,15 +132,7 @@ class _AdminPageState extends State<AdminPage> {
                   controller: _dateController,
                   decoration: const InputDecoration(
                     labelText: AppString.date,
-                    filled: true,
-                    fillColor: Colors.white,
                     suffixIcon: Icon(Icons.calendar_today_outlined),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
-                    ),
                   ),
                   readOnly: true,
                   onTap: _selectDate,
@@ -153,32 +155,41 @@ class _AdminPageState extends State<AdminPage> {
                 Row(
                   children: [
                     Expanded(
+                      flex: 5,
                       child: ProductSuggestionField(
                         controller: _productController,
                       ),
                     ),
-                    AppSpace.horizontal.space40,
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
-                      onTap: () =>
-                          Provider.of<SelectedProduct>(context, listen: false)
-                              .addSelectedProductToList(),
-                      child: const Icon(
-                        Icons.add_box_outlined,
-                        size: 60,
+                    AppSpace.horizontal.space10,
+                    Expanded(
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
+                        onTap: () =>
+                            Provider.of<SelectedProduct>(context, listen: false)
+                                .addSelectedProductToList(),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            decoration: roundedRectangleShapeDecoration,
+                            child: Icon(
+                              Icons.add_outlined,
+                              color: context.outlineColor,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 AppSpace.vertical.space20,
-                const Text('Selected Products'),
-                AppSpace.vertical.space20,
+                const Text(AppString.chosenProducts),
+                AppSpace.vertical.space5,
                 Consumer<SelectedProduct>(
                   builder: (context, selectedProduct, child) {
                     return Container(
-                      height: 400,
-                      decoration: BoxDecoration(border: Border.all(width: 2)),
+                      height: 200,
+                      decoration: roundedRectangleShapeDecoration,
                       child: ListView.builder(
                         itemCount: selectedProduct.selectedProducts.length,
                         itemBuilder: (context, index) {
@@ -197,17 +208,12 @@ class _AdminPageState extends State<AdminPage> {
                 ),
                 AppSpace.vertical.space20,
                 SuggestionField(
-                  controller: _agentController,
-                  labelText: AppString.agent,
-                  getSuggestionMethod: (pattern) =>
-                      getSuggestions<Agent>(pattern, Agent.fromJson),
-                ),
-                SuggestionField(
                   controller: _countryController,
                   labelText: AppString.country,
                   getSuggestionMethod: (pattern) =>
                       getSuggestions<Country>(pattern, Country.fromJson),
                 ),
+                AppSpace.vertical.space20,
                 SuggestionField(
                   controller: _cityController,
                   labelText: AppString.city,
@@ -215,11 +221,22 @@ class _AdminPageState extends State<AdminPage> {
                       getSuggestions<City>(pattern, City.fromJson),
                 ),
                 AppSpace.vertical.space20,
+                TextField(
+                  controller: _noteController,
+                  minLines: 5,
+                  maxLines: 10,
+                  maxLength: 1500,
+                  decoration: const InputDecoration(
+                    hintText: AppString.addNotes,
+                  ),
+                ),
+                AppSpace.vertical.space20,
                 Center(
                   child: ElevatedButton(
                       onPressed: () {}, //TODO: implement save method
                       child: const Text(AppString.save)),
-                )
+                ),
+                AppSpace.vertical.space60,
               ],
             ),
           ),
@@ -231,10 +248,11 @@ class _AdminPageState extends State<AdminPage> {
   Future<void> _selectDate() async {
     final DateFormat dateFormat = DateFormat('dd.MM.yyyy');
     DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime(2100));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
 
     if (pickedDate != null) {
       setState(() {
@@ -266,5 +284,68 @@ class _AdminPageState extends State<AdminPage> {
     } else {
       throw Exception('Unexpected Error');
     }
+  }
+}
+
+class CheckCircle extends StatefulWidget {
+  const CheckCircle({super.key});
+
+  @override
+  State<CheckCircle> createState() => _CheckCircleState();
+}
+
+class _CheckCircleState extends State<CheckCircle> {
+  bool isChecked = false;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(40),
+      onTap: () {
+        setState(() {
+          isChecked = !isChecked;
+        });
+      },
+      child: isChecked
+          ? Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red,
+                  ),
+                ),
+                const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                )
+              ],
+            )
+          : Container(
+              height: 40,
+              width: 40,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
+              ),
+            ),
+    );
+  }
+}
+
+class _BackButton extends StatelessWidget {
+  const _BackButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.pop(context),
+      child: Icon(
+        Icons.arrow_back_ios_new_outlined,
+        color: context.mainThemeColor,
+      ),
+    );
   }
 }

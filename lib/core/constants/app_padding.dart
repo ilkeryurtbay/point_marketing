@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 
 class AppPadding {
   AppPadding._();
+  static const pagePadding = EdgeInsets.fromLTRB(16, 32, 16, 16);
+
   static const allSides8 = EdgeInsets.all(8);
   static const allSides16 = EdgeInsets.all(16);
   static const allSides24 = EdgeInsets.all(24);
@@ -13,4 +15,6 @@ class AppPadding {
   static const verticalSymmetric8 = EdgeInsets.symmetric(vertical: 8);
   static const verticalSymmetric16 = EdgeInsets.symmetric(vertical: 16);
   static const verticalSymmetric24 = EdgeInsets.symmetric(vertical: 24);
+
+  static const onlyRight4 = EdgeInsets.only(right: 4);
 }
