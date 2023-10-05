@@ -5,7 +5,6 @@ class Agent implements ISuggestionModel {
   final String? name;
   Agent({required this.name});
 
-  @override
   factory Agent.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
       Agent(name: json['title']);

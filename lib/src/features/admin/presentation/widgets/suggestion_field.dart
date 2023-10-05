@@ -1,17 +1,16 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
+part of 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
 
 class SuggestionField<T extends ISuggestionModel> extends StatefulWidget {
   final TextEditingController controller;
   final FutureOr<Iterable<T>> Function(String) getSuggestionMethod;
 
+  final String labelText;
+
   const SuggestionField({
     Key? key,
     required this.controller,
     required this.getSuggestionMethod,
+    required this.labelText,
   }) : super(key: key);
 
   @override
@@ -25,6 +24,9 @@ class _SuggestionFieldState<T extends ISuggestionModel>
     return TypeAheadField<T?>(
       textFieldConfiguration: TextFieldConfiguration(
         controller: widget.controller,
+        decoration: InputDecoration(
+            labelText: widget.labelText,
+            suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined)),
       ),
       suggestionsCallback: widget.getSuggestionMethod,
       itemBuilder: (context, suggestion) {
@@ -43,6 +45,7 @@ class _SuggestionFieldState<T extends ISuggestionModel>
       },
       noItemsFoundBuilder: (context) => const SizedBox(),
       debounceDuration: const Duration(milliseconds: 800),
+      autoFlipDirection: true,
     );
   }
 }
