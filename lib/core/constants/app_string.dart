@@ -12,4 +12,7 @@ class AppString {
   static const String save = 'Kaydet';
   static const String agent = 'Eleman';
   static const String chosenProducts = 'Seçilen Ürünler';
+  static const String productAlreadyAdded = 'Bu ürünü zaten eklediniz';
+  static const String fillEmptyNames =
+      'Lütfen firma ve ürün adını boş bırakmayın';
 }

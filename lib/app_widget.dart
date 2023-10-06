@@ -14,8 +14,8 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
-          ChangeNotifierProvider<SelectedProduct>(
-            create: (context) => SelectedProduct(),
+          ChangeNotifierProvider<SelectedProductProvider>(
+            create: (context) => SelectedProductProvider(),
           ),
           ChangeNotifierProvider<AppThemeProvider>(
             create: (context) => AppThemeProvider(),
