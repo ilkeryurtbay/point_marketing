@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/entity/product_entity.dart';
 
-class SelectedProduct extends ChangeNotifier {
+class SelectedProductProvider extends ChangeNotifier {
   late Product? selectedProduct;
   List<Product> selectedProducts = [];
 

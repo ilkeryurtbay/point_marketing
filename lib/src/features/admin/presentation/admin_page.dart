@@ -18,7 +18,12 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_padding.dart';
 import '../data/entity/country_entity.dart';
 import '../data/entity/market_entity.dart';
+import '../data/entity/product_entity.dart';
 
+part 'package:point_marketing/src/features/admin/presentation/widgets/app_bar_back_button.dart';
+part 'package:point_marketing/src/features/admin/presentation/widgets/check_circle.dart';
+part 'package:point_marketing/src/features/admin/presentation/widgets/date_picker_field.dart';
+part 'package:point_marketing/src/features/admin/presentation/widgets/product_tile.dart';
 part 'package:point_marketing/src/features/admin/presentation/widgets/suggestion_field.dart';
 
 class AdminPage extends StatefulWidget {
@@ -63,26 +68,30 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('page build called!!!!!!!!1');
     const double topListHeight = 160;
-    final roundedRectangleShapeDecoration = ShapeDecoration(
+    const double scrollBarRadius = 10;
+    const double scrollbarThickness = 5;
+    final roundedOutlineBorderWithRadius8 = ShapeDecoration(
         shape: RoundedRectangleBorder(
             side: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
+              color: context.outlineColor,
             ),
             borderRadius: BorderRadius.circular(8)));
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           AppString.addMission,
         ),
-        leading: const _BackButton(),
+        leading: const _AppBarBackButton(),
       ),
       body: RawScrollbar(
         thumbVisibility: true,
         padding: AppPadding.onlyRight4,
         thumbColor: context.mainThemeColor,
-        thickness: 5,
-        radius: const Radius.circular(10),
+        thickness: scrollbarThickness,
+        radius: const Radius.circular(scrollBarRadius),
         interactive: true,
         child: Padding(
           padding: AppPadding.pagePadding,
@@ -115,7 +124,7 @@ class _AdminPageState extends State<AdminPage> {
                                       ),
                                     ),
                                     const Positioned(
-                                        right: 0, child: CheckCircle())
+                                        right: 0, child: _CheckCircle())
                                   ],
                                 ),
                               ),
@@ -128,15 +137,7 @@ class _AdminPageState extends State<AdminPage> {
                     },
                   ),
                 ),
-                TextField(
-                  controller: _dateController,
-                  decoration: const InputDecoration(
-                    labelText: AppString.date,
-                    suffixIcon: Icon(Icons.calendar_today_outlined),
-                  ),
-                  readOnly: true,
-                  onTap: _selectDate,
-                ),
+                _DatePickerField(controller: _dateController),
                 AppSpace.vertical.space20,
                 SuggestionField<Market>(
                   controller: _marketController,
@@ -165,13 +166,41 @@ class _AdminPageState extends State<AdminPage> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
-                        onTap: () =>
-                            Provider.of<SelectedProduct>(context, listen: false)
-                                .addSelectedProductToList(),
+                        onTap: () {
+                          SelectedProductProvider provider =
+                              Provider.of<SelectedProductProvider>(context,
+                                  listen: false);
+
+                          final companyName = _companyController.text.trim();
+                          final productName = _productController.text.trim();
+                          //check if one of the names left empty
+                          if (companyName.isNotEmpty &&
+                              productName.isNotEmpty) {
+                            provider.selectedProduct = Product(
+                                name: productName, companyName: companyName);
+                          } else {
+                            //show snack bar to make the user fill the empty fields
+                            _showErrorSnackBar(
+                                context: context,
+                                text: AppString.fillEmptyNames);
+                            return;
+                          }
+                          //if the selected product is not added before, add it to the selectedProducts list
+                          if (!provider.selectedProducts
+                              .contains(provider.selectedProduct)) {
+                            provider.addSelectedProductToList();
+                            _productController.clear();
+                          } else {
+                            //show a snack bar to the user that is telling they are trying to add the same product more than once
+                            _showErrorSnackBar(
+                                context: context,
+                                text: AppString.productAlreadyAdded);
+                          }
+                        },
                         child: AspectRatio(
                           aspectRatio: 1,
                           child: Container(
-                            decoration: roundedRectangleShapeDecoration,
+                            decoration: roundedOutlineBorderWithRadius8,
                             child: Icon(
                               Icons.add_outlined,
                               color: context.outlineColor,
@@ -185,22 +214,17 @@ class _AdminPageState extends State<AdminPage> {
                 AppSpace.vertical.space20,
                 const Text(AppString.chosenProducts),
                 AppSpace.vertical.space5,
-                Consumer<SelectedProduct>(
+                Consumer<SelectedProductProvider>(
                   builder: (context, selectedProduct, child) {
                     return Container(
                       height: 200,
-                      decoration: roundedRectangleShapeDecoration,
+                      decoration: roundedOutlineBorderWithRadius8,
                       child: ListView.builder(
                         itemCount: selectedProduct.selectedProducts.length,
                         itemBuilder: (context, index) {
                           final product =
                               selectedProduct.selectedProducts[index];
-                          return ListTile(
-                            title: Text(product.name ??
-                                'product name could not be retrieved'),
-                            subtitle: Text(product.companyName ??
-                                'company name could not be retrieved'),
-                          );
+                          return _ProductTile(product: product);
                         },
                       ),
                     );
@@ -245,22 +269,6 @@ class _AdminPageState extends State<AdminPage> {
     );
   }
 
-  Future<void> _selectDate() async {
-    final DateFormat dateFormat = DateFormat('dd.MM.yyyy');
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      setState(() {
-        _dateController.text = dateFormat.format(pickedDate).toString();
-      });
-    }
-  }
-
   ///Uses the passed fromJson function to convert the raw json data of the given model from database
   ///into a list of entities then use the pattern to filter the list and show relevant suggestions
   FutureOr<Iterable<T>> getSuggestions<T extends ISuggestionModel>(
@@ -285,67 +293,10 @@ class _AdminPageState extends State<AdminPage> {
       throw Exception('Unexpected Error');
     }
   }
-}
 
-class CheckCircle extends StatefulWidget {
-  const CheckCircle({super.key});
-
-  @override
-  State<CheckCircle> createState() => _CheckCircleState();
-}
-
-class _CheckCircleState extends State<CheckCircle> {
-  bool isChecked = false;
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(40),
-      onTap: () {
-        setState(() {
-          isChecked = !isChecked;
-        });
-      },
-      child: isChecked
-          ? Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  height: 40,
-                  width: 40,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                  ),
-                ),
-                const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                )
-              ],
-            )
-          : Container(
-              height: 40,
-              width: 40,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey,
-              ),
-            ),
-    );
-  }
-}
-
-class _BackButton extends StatelessWidget {
-  const _BackButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.pop(context),
-      child: Icon(
-        Icons.arrow_back_ios_new_outlined,
-        color: context.mainThemeColor,
-      ),
-    );
+  void _showErrorSnackBar(
+      {required BuildContext context, required String text}) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Center(child: Text(text))));
   }
 }

@@ -12,4 +12,18 @@ class Product implements ISuggestionModel {
         name: json['id'].toString(),
         companyName: json['body'],
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Product &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          companyName == other.companyName;
+
+  @override
+  int get hashCode => name.hashCode ^ companyName.hashCode;
+
+  @override
+  String toString() => 'Product{name: $name, company name: $companyName}';
 }
