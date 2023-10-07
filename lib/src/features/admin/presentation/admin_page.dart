@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
 import 'package:point_marketing/core/constants/app_string.dart';
 import 'package:point_marketing/core/util/build_context_extension.dart';
-import 'package:point_marketing/src/features/admin/application/selected_product.dart';
+import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
+import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
+import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/city_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/company_entity.dart';
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
@@ -34,6 +36,7 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
+  late GlobalKey<FormState> _formKey;
   late TextEditingController _dateController;
   late TextEditingController _marketController;
   late TextEditingController _companyController;
@@ -41,10 +44,12 @@ class _AdminPageState extends State<AdminPage> {
   late TextEditingController _countryController;
   late TextEditingController _cityController;
   late TextEditingController _noteController;
+  late TextEditingController _agentController;
 
   @override
   void initState() {
     super.initState();
+    _formKey = GlobalKey<FormState>();
     _dateController = TextEditingController();
     _marketController = TextEditingController();
     _companyController = TextEditingController();
@@ -52,6 +57,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController = TextEditingController();
     _cityController = TextEditingController();
     _noteController = TextEditingController();
+    _agentController = TextEditingController();
   }
 
   @override
@@ -63,20 +69,16 @@ class _AdminPageState extends State<AdminPage> {
     _countryController.dispose();
     _cityController.dispose();
     _noteController.dispose();
+    _agentController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const double topListHeight = 160;
     const double scrollBarRadius = 10;
     const double scrollbarThickness = 5;
-    final roundedOutlineBorderWithRadius8 = ShapeDecoration(
-        shape: RoundedRectangleBorder(
-            side: BorderSide(
-              color: context.outlineColor,
-            ),
-            borderRadius: BorderRadius.circular(8)));
+    const double addButtonRadius = 8;
+    const double productListRadius = 12;
 
     return Scaffold(
       appBar: AppBar(
@@ -95,172 +97,160 @@ class _AdminPageState extends State<AdminPage> {
         child: Padding(
           padding: AppPadding.pagePadding,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: topListHeight,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: topListHeight * 0.75,
-                                width: topListHeight * 0.75,
-                                child: Stack(
-                                  children: [
-                                    Center(
-                                      child: CircleAvatar(
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        radius: topListHeight / 3.25,
-                                      ),
-                                    ),
-                                    const Positioned(
-                                        right: 0, child: _CheckCircle())
-                                  ],
-                                ),
-                              ),
-                              const Text('Eleman Adı'),
-                            ],
-                          ),
-                          AppSpace.horizontal.space20,
-                        ],
-                      );
-                    },
-                  ),
-                ),
-                _DatePickerField(controller: _dateController),
-                AppSpace.vertical.space20,
-                SuggestionField<Market>(
-                  controller: _marketController,
-                  labelText: AppString.market,
-                  getSuggestionMethod: (pattern) =>
-                      getSuggestions<Market>(pattern, Market.fromJson),
-                ),
-                AppSpace.vertical.space20,
-                SuggestionField<Company>(
-                  controller: _companyController,
-                  labelText: AppString.company,
-                  getSuggestionMethod: (pattern) =>
-                      getSuggestions(pattern, Company.fromJson),
-                ),
-                AppSpace.vertical.space20,
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: ProductSuggestionField(
-                        controller: _productController,
-                      ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DatePickerField(controller: _dateController),
+                  AppSpace.vertical.space20,
+                  Consumer<ValidationProvider>(
+                    builder: (context, validationProvider, child) =>
+                        SuggestionField<Market>(
+                      controller: _marketController,
+                      labelText: AppString.market,
+                      getSuggestionMethod: (pattern) =>
+                          getSuggestions<Market>(pattern, Market.fromJson),
                     ),
-                    AppSpace.horizontal.space10,
-                    Expanded(
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
-                        onTap: () {
-                          SelectedProductProvider provider =
-                              Provider.of<SelectedProductProvider>(context,
-                                  listen: false);
+                  ),
+                  AppSpace.vertical.space20,
+                  SuggestionField<Company>(
+                    controller: _companyController,
+                    labelText: AppString.company,
+                    getSuggestionMethod: (pattern) =>
+                        getSuggestions(pattern, Company.fromJson),
+                  ),
+                  AppSpace.vertical.space20,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: ProductSuggestionField(
+                          controller: _productController,
+                        ),
+                      ),
+                      AppSpace.horizontal.space10,
+                      Expanded(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
+                          onTap: () {
+                            SelectedProductProvider provider =
+                                Provider.of<SelectedProductProvider>(context,
+                                    listen: false);
 
-                          final companyName = _companyController.text.trim();
-                          final productName = _productController.text.trim();
-                          //check if one of the names left empty
-                          if (companyName.isNotEmpty &&
-                              productName.isNotEmpty) {
-                            provider.selectedProduct = Product(
-                                name: productName, companyName: companyName);
-                          } else {
-                            //show snack bar to make the user fill the empty fields
-                            _showErrorSnackBar(
-                                context: context,
-                                text: AppString.fillEmptyNames);
-                            return;
-                          }
-                          //if the selected product is not added before, add it to the selectedProducts list
-                          if (!provider.selectedProducts
-                              .contains(provider.selectedProduct)) {
-                            provider.addSelectedProductToList();
-                            _productController.clear();
-                          } else {
-                            //show a snack bar to the user that is telling they are trying to add the same product more than once
-                            _showErrorSnackBar(
-                                context: context,
-                                text: AppString.productAlreadyAdded);
-                          }
-                        },
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Container(
-                            decoration: roundedOutlineBorderWithRadius8,
-                            child: Icon(
-                              Icons.add_outlined,
-                              color: context.outlineColor,
+                            final companyName = _companyController.text.trim();
+                            final productName = _productController.text.trim();
+                            //check if one of the names left empty
+                            if (companyName.isNotEmpty &&
+                                productName.isNotEmpty) {
+                              provider.selectedProduct = Product(
+                                  name: productName, companyName: companyName);
+                            } else {
+                              //show snack bar to make the user fill the empty fields
+                              _showErrorSnackBar(
+                                  context: context,
+                                  text: AppString.fillEmptyNames);
+                              return;
+                            }
+                            //if the selected product is not added before, add it to the selectedProducts list
+                            if (!provider.selectedProducts
+                                .contains(provider.selectedProduct)) {
+                              provider.addSelectedProductToList();
+                              _productController.clear();
+                            } else {
+                              //show a snack bar to the user that is telling they are trying to add the same product more than once
+                              _showErrorSnackBar(
+                                  context: context,
+                                  text: AppString.productAlreadyAdded);
+                            }
+                          },
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: Container(
+                              decoration:
+                                  _buildRoundedShape(context, addButtonRadius),
+                              child: Icon(
+                                Icons.add_outlined,
+                                color: context.outlineColor,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                AppSpace.vertical.space20,
-                const Text(AppString.chosenProducts),
-                AppSpace.vertical.space5,
-                Consumer<SelectedProductProvider>(
-                  builder: (context, selectedProduct, child) {
-                    return Container(
-                      height: 200,
-                      decoration: roundedOutlineBorderWithRadius8,
-                      child: ListView.builder(
-                        itemCount: selectedProduct.selectedProducts.length,
-                        itemBuilder: (context, index) {
-                          final product =
-                              selectedProduct.selectedProducts[index];
-                          return _ProductTile(product: product);
-                        },
-                      ),
-                    );
-                  },
-                ),
-                AppSpace.vertical.space20,
-                SuggestionField(
-                  controller: _countryController,
-                  labelText: AppString.country,
-                  getSuggestionMethod: (pattern) =>
-                      getSuggestions<Country>(pattern, Country.fromJson),
-                ),
-                AppSpace.vertical.space20,
-                SuggestionField(
-                  controller: _cityController,
-                  labelText: AppString.city,
-                  getSuggestionMethod: (pattern) =>
-                      getSuggestions<City>(pattern, City.fromJson),
-                ),
-                AppSpace.vertical.space20,
-                TextField(
-                  controller: _noteController,
-                  minLines: 5,
-                  maxLines: 10,
-                  maxLength: 1500,
-                  decoration: const InputDecoration(
-                    hintText: AppString.addNotes,
+                    ],
                   ),
-                ),
-                AppSpace.vertical.space20,
-                Center(
-                  child: ElevatedButton(
-                      onPressed: () {}, //TODO: implement save method
-                      child: const Text(AppString.save)),
-                ),
-                AppSpace.vertical.space60,
-              ],
+                  AppSpace.vertical.space20,
+                  const Text(AppString.chosenProducts),
+                  AppSpace.vertical.space5,
+                  Consumer<SelectedProductProvider>(
+                    builder: (context, selectedProduct, child) {
+                      return Container(
+                        height: 240,
+                        decoration:
+                            _buildRoundedShape(context, productListRadius),
+                        child: ListView.builder(
+                          itemCount: selectedProduct.selectedProducts.length,
+                          itemBuilder: (context, index) {
+                            final product =
+                                selectedProduct.selectedProducts[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 6.0, left: 4, right: 4),
+                              child: _ProductTile(product: product),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  AppSpace.vertical.space20,
+                  SuggestionField(
+                    controller: _countryController,
+                    labelText: AppString.country,
+                    getSuggestionMethod: (pattern) =>
+                        getSuggestions<Country>(pattern, Country.fromJson),
+                  ),
+                  AppSpace.vertical.space20,
+                  SuggestionField(
+                    controller: _cityController,
+                    labelText: AppString.city,
+                    getSuggestionMethod: (pattern) =>
+                        getSuggestions<City>(pattern, City.fromJson),
+                  ),
+                  AppSpace.vertical.space20,
+                  SuggestionField(
+                    controller: _agentController,
+                    labelText: AppString.agent,
+                    getSuggestionMethod: (pattern) =>
+                        getSuggestions<Agent>(pattern, Agent.fromJson),
+                  ),
+                  AppSpace.vertical.space20,
+                  TextField(
+                    controller: _noteController,
+                    minLines: 5,
+                    maxLines: 10,
+                    maxLength: 1500,
+                    decoration: const InputDecoration(
+                      hintText: AppString.addNotes,
+                      labelText: AppString.notes,
+                      alignLabelWithHint: true,
+                    ),
+                  ),
+                  AppSpace.vertical.space20,
+                  Center(
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Provider.of<ValidationProvider>(context,
+                                  listen: false)
+                              .activateAllValidations();
+                        }, //TODO: implement validation and save method
+                        child: const Text(AppString.save)),
+                  ),
+                  AppSpace.vertical.space60,
+                ],
+              ),
             ),
           ),
         ),
@@ -291,6 +281,15 @@ class _AdminPageState extends State<AdminPage> {
     } else {
       throw Exception('Unexpected Error');
     }
+  }
+
+  ShapeDecoration _buildRoundedShape(BuildContext context, double radius) {
+    return ShapeDecoration(
+        shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: context.outlineColor,
+            ),
+            borderRadius: BorderRadius.circular(radius)));
   }
 
   void _showErrorSnackBar(

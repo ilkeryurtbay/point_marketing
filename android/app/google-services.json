@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "332275413352",
+    "project_id": "point-marketing-18d63",
+    "storage_bucket": "point-marketing-18d63.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332275413352:android:c4116e2d639d70f04226dd",
+        "android_client_info": {
+          "package_name": "com.example.market_statistic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMMSBXBSp1trUZbcmKWLMeuyf9oCe9Bgo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
