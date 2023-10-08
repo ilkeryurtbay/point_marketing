@@ -5,6 +5,7 @@ import 'package:point_marketing/core/theme/app_theme_mode_enum.dart';
 import 'package:point_marketing/core/theme/app_theme_provider.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product.dart';
 import 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
+import 'package:point_marketing/src/features/mission/presentation/agent_mission_form.dart';
 import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
@@ -41,7 +42,7 @@ class AppWidget extends StatelessWidget {
             theme: currentTheme == AppThemeMode.light
                 ? AppTheme.lightTheme
                 : AppTheme.darkTheme,
-            home: const AdminPage(),
+            home:  AgentMissionForm(),
           );
         });
   }
