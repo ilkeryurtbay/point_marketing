@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class marketerNotesSection extends StatelessWidget {
+class MarketerNotesSection extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
 
-  marketerNotesSection({
+  const MarketerNotesSection({
+    super.key,
     required this.controller,
     required this.onChanged,
   });

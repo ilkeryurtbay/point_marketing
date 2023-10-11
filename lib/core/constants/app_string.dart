@@ -15,4 +15,7 @@ class AppString {
   static const String productAlreadyAdded = 'Bu ürünü zaten eklediniz';
   static const String fillEmptyNames =
       'Lütfen firma ve ürün adını boş bırakmayın';
+  static const String addProductToPromote = 'Lütfen tanıtılacak ürün ekleyin';
+
+  //
 }

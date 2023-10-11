@@ -7,8 +7,6 @@ import 'package:point_marketing/core/util/dismiss_keyboard.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
 import 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
-import 'package:point_marketing/src/features/auth/authentication.dart';
-import 'package:point_marketing/src/features/mission/presentation/agent_mission_form.dart';
 import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
@@ -45,13 +43,12 @@ class AppWidget extends StatelessWidget {
           return DismissKeyboard(
             //Dismiss keyboard and remove focus when tapped outside of a text field app wide
             child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Flutter Demo',
-              theme: currentTheme == AppThemeMode.light
-                  ? AppTheme.lightTheme
-                  : AppTheme.darkTheme,
-              home:  AuthenticationPage()
-            ),
+                debugShowCheckedModeBanner: false,
+                title: 'Flutter Demo',
+                theme: currentTheme == AppThemeMode.light
+                    ? AppTheme.lightTheme
+                    : AppTheme.darkTheme,
+                home: const AdminPage()),
           );
         });
   }

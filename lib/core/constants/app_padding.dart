@@ -19,4 +19,6 @@ class AppPadding {
   static const onlyRight4 = EdgeInsets.only(right: 4);
 
   static const onlyLeft16 = EdgeInsets.only(left: 16);
+
+  static const top6Horizontal4 = EdgeInsets.only(top: 6.0, left: 4, right: 4);
 }

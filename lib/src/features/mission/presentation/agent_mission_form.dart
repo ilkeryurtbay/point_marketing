@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:point_marketing/core/constants/app_padding.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
-import 'package:point_marketing/core/util/build_context_extension.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/agentNotesSection.dart';
+import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/agent_notes_section.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/customerAppreciationSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/customerNumberControllerSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/endTimeSection.dart';
@@ -50,13 +50,7 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
       appBar: AppBar(
         title: const Text("Görev Formu"),
       ),
-      body: RawScrollbar(
-        thumbVisibility: true,
-        padding: AppPadding.onlyRight4,
-        thumbColor: context.mainThemeColor,
-        thickness: scrollbarThickness,
-        radius: Radius.circular(scrollBarRadius),
-        interactive: true,
+      body: PageScrollBar(
         child: Padding(
           padding: AppPadding.pagePadding,
           child: SingleChildScrollView(
@@ -159,7 +153,7 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                   Row(
                     children: [
                       const Expanded(child: Text("Marketçi notları: ")),
-                      marketerNotesSection(
+                      MarketerNotesSection(
                         controller: _marketOfficialNotesController,
                         onChanged: (value) {
                           // Girilen değeri kullanmak için burada işlem yapabilirsiniz.

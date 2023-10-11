@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
 import 'package:point_marketing/core/constants/app_string.dart';
 import 'package:point_marketing/core/util/build_context_extension.dart';
+import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
 import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
@@ -18,6 +19,7 @@ import 'package:point_marketing/src/features/admin/presentation/widgets/product_
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_padding.dart';
+import '../../mission/presentation/agent_mission_form.dart';
 import '../data/entity/country_entity.dart';
 import '../data/entity/market_entity.dart';
 import '../data/entity/product_entity.dart';
@@ -75,8 +77,6 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    const double scrollBarRadius = 10;
-    const double scrollbarThickness = 5;
     const double addProductButtonRadius = 8;
     const double productListRadius = 12;
     final showValidation =
@@ -89,13 +89,7 @@ class _AdminPageState extends State<AdminPage> {
         ),
         leading: const _AppBarBackButton(),
       ),
-      body: RawScrollbar(
-        thumbVisibility: true,
-        padding: AppPadding.onlyRight4,
-        thumbColor: context.mainThemeColor,
-        thickness: scrollbarThickness,
-        radius: const Radius.circular(scrollBarRadius),
-        interactive: true,
+      body: PageScrollBar(
         child: Padding(
           padding: AppPadding.pagePadding,
           child: SingleChildScrollView(
@@ -114,14 +108,14 @@ class _AdminPageState extends State<AdminPage> {
                     controller: _marketController,
                     labelText: AppString.market,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions<Market>(pattern, Market.fromJson),
+                        _getSuggestions<Market>(pattern, Market.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField<Company>(
                     controller: _companyController,
                     labelText: AppString.company,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions(pattern, Company.fromJson),
+                        _getSuggestions(pattern, Company.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   Row(
@@ -169,6 +163,7 @@ class _AdminPageState extends State<AdminPage> {
                                   text: AppString.productAlreadyAdded);
                             }
                           },
+                          //use aspect ratio to keep the square shape of the button on different screen sizes
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: Container(
@@ -190,6 +185,7 @@ class _AdminPageState extends State<AdminPage> {
                   AppSpace.vertical.space5,
                   Consumer<SelectedProductProvider>(
                     builder: (context, selectedProduct, child) {
+                      //if save button is tapped and the list is empty, showError will be true
                       final bool showError = showValidation &&
                           selectedProduct.selectedProducts.isEmpty;
                       return Column(
@@ -210,19 +206,19 @@ class _AdminPageState extends State<AdminPage> {
                                 final product =
                                     selectedProduct.selectedProducts[index];
                                 return Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 6.0, left: 4, right: 4),
+                                  padding: AppPadding.top6Horizontal4,
                                   child: _ProductTile(product: product),
                                 );
                               },
                             ),
                           ),
+                          //if showError is true, an error text with some space will be added to the column and shown
                           if (showError) ...[
                             AppSpace.vertical.space5,
                             Padding(
                               padding: AppPadding.onlyLeft16,
                               child: Text(
-                                'Lütfen tanıtılacak ürün ekleyin',
+                                AppString.addProductToPromote,
                                 style: TextStyle(color: context.errorColor),
                               ),
                             )
@@ -236,21 +232,21 @@ class _AdminPageState extends State<AdminPage> {
                     controller: _countryController,
                     labelText: AppString.country,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions<Country>(pattern, Country.fromJson),
+                        _getSuggestions<Country>(pattern, Country.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField(
                     controller: _cityController,
                     labelText: AppString.city,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions<City>(pattern, City.fromJson),
+                        _getSuggestions<City>(pattern, City.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField(
                     controller: _agentController,
                     labelText: AppString.agent,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions<Agent>(pattern, Agent.fromJson),
+                        _getSuggestions<Agent>(pattern, Agent.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   TextField(
@@ -271,11 +267,11 @@ class _AdminPageState extends State<AdminPage> {
                           Provider.of<ValidationProvider>(context,
                                   listen: false)
                               .activateAllValidations();
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => const AgentMissionForm(),
-                          //     ));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AgentMissionForm(),
+                              ));
                         }, //TODO: implement validation and save method
                         child: const Text(AppString.save)),
                   ),
@@ -291,7 +287,7 @@ class _AdminPageState extends State<AdminPage> {
 
   ///Uses the passed fromJson function to convert the raw json data of the given model from database
   ///into a list of entities then use the pattern to filter the list and show relevant suggestions
-  FutureOr<Iterable<T>> getSuggestions<T extends ISuggestionModel>(
+  FutureOr<Iterable<T>> _getSuggestions<T extends ISuggestionModel>(
       String pattern, T Function(Map<String, dynamic>) fromJson) async {
     //TODO:Update the data source when firebase is ready!
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
