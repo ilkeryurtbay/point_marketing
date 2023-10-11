@@ -79,8 +79,6 @@ class _AdminPageState extends State<AdminPage> {
     const double scrollbarThickness = 5;
     const double addButtonRadius = 8;
     const double productListRadius = 12;
-    final validationProvider =
-        Provider.of<ValidationProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
