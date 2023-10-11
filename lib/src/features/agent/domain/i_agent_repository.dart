@@ -1,7 +1,7 @@
-import '../../admin/data/entity/agent_entity.dart';
+import '../../admin/domain/entity/employee_entity.dart';
 
 abstract class IAgentRepository {
-  Future<void> createAgent({required Agent agent});
-  Future<void> updateAgent({required Agent agent});
-  Future<void> deleteAgent({required Agent agent});
+  Future<void> createAgent({required Employee agent});
+  Future<void> updateAgent({required Employee agent});
+  Future<void> deleteAgent({required Employee agent});
 }

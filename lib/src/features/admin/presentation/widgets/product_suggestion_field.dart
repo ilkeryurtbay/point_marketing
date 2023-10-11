@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
 import 'package:point_marketing/core/constants/app_string.dart';
-import 'package:point_marketing/src/features/admin/data/entity/product_entity.dart';
+import 'package:point_marketing/src/features/admin/domain/entity/product_entity.dart';
 
 class ProductSuggestionField extends StatefulWidget {
   final TextEditingController controller;
@@ -27,6 +27,7 @@ class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
           controller: widget.controller,
           decoration: const InputDecoration(
             labelText: AppString.product,
+            suffixIcon: Icon(Icons.keyboard_arrow_down_outlined),
           )),
       suggestionsCallback: (pattern) =>
           _getProductSuggestions(pattern, Product.fromJson),

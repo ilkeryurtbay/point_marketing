@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
@@ -11,18 +12,18 @@ import 'package:point_marketing/core/util/build_context_extension.dart';
 import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
-import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
-import 'package:point_marketing/src/features/admin/data/entity/city_entity.dart';
-import 'package:point_marketing/src/features/admin/data/entity/company_entity.dart';
+import 'package:point_marketing/src/features/admin/domain/entity/city_entity.dart';
+import 'package:point_marketing/src/features/admin/domain/entity/company_entity.dart';
+import 'package:point_marketing/src/features/admin/domain/entity/employee_entity.dart';
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
 import 'package:point_marketing/src/features/admin/presentation/widgets/product_suggestion_field.dart';
+import 'package:point_marketing/src/features/mission/domain/mission_entity.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_padding.dart';
-import '../../mission/presentation/agent_mission_form.dart';
-import '../data/entity/country_entity.dart';
-import '../data/entity/market_entity.dart';
-import '../data/entity/product_entity.dart';
+import '../domain/entity/country_entity.dart';
+import '../domain/entity/market_entity.dart';
+import '../domain/entity/product_entity.dart';
 
 part 'package:point_marketing/src/features/admin/presentation/widgets/app_bar_back_button.dart';
 part 'package:point_marketing/src/features/admin/presentation/widgets/check_circle.dart';
@@ -46,7 +47,8 @@ class _AdminPageState extends State<AdminPage> {
   late TextEditingController _countryController;
   late TextEditingController _cityController;
   late TextEditingController _noteController;
-  late TextEditingController _agentController;
+  late TextEditingController _employeeController;
+  Employee? selectedEmployee;
 
   @override
   void initState() {
@@ -59,7 +61,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController = TextEditingController();
     _cityController = TextEditingController();
     _noteController = TextEditingController();
-    _agentController = TextEditingController();
+    _employeeController = TextEditingController();
   }
 
   @override
@@ -71,7 +73,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController.dispose();
     _cityController.dispose();
     _noteController.dispose();
-    _agentController.dispose();
+    _employeeController.dispose();
     super.dispose();
   }
 
@@ -228,25 +230,30 @@ class _AdminPageState extends State<AdminPage> {
                     },
                   ),
                   AppSpace.vertical.space20,
-                  SuggestionField(
+                  SuggestionField<Country>(
                     controller: _countryController,
                     labelText: AppString.country,
                     getSuggestionMethod: (pattern) =>
                         _getSuggestions<Country>(pattern, Country.fromJson),
                   ),
                   AppSpace.vertical.space20,
-                  SuggestionField(
+                  SuggestionField<City>(
                     controller: _cityController,
                     labelText: AppString.city,
                     getSuggestionMethod: (pattern) =>
                         _getSuggestions<City>(pattern, City.fromJson),
                   ),
                   AppSpace.vertical.space20,
-                  SuggestionField(
-                    controller: _agentController,
+                  SuggestionField<Employee>(
+                    controller: _employeeController,
                     labelText: AppString.agent,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<Agent>(pattern, Agent.fromJson),
+                        _getSuggestions<Employee>(pattern, Employee.fromJson),
+                    onSuggestionSelected: (employee) {
+                      selectedEmployee = employee;
+                      _employeeController.text =
+                          employee?.name ?? 'Çalışan ismi alınamadı';
+                    },
                   ),
                   AppSpace.vertical.space20,
                   TextField(
@@ -267,11 +274,27 @@ class _AdminPageState extends State<AdminPage> {
                           Provider.of<ValidationProvider>(context,
                                   listen: false)
                               .activateAllValidations();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AgentMissionForm(),
-                              ));
+
+                          final Mission mission = Mission(
+                            date: _dateController.text.trim(),
+                            marketName: _marketController.text.trim(),
+                            products: context
+                                .read<SelectedProductProvider>()
+                                .selectedProducts,
+                            assignedEmployee: _employeeController.text.trim(),
+                            city: _cityController.text.trim(),
+                            country: _countryController.text.trim(),
+                          );
+
+                          FirebaseFirestore.instance
+                              .collection('agents')
+                              .doc(mission.assignedEmployee);
+
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => const AgentMissionForm(),
+                          //     ));
                         }, //TODO: implement validation and save method
                         child: const Text(AppString.save)),
                   ),

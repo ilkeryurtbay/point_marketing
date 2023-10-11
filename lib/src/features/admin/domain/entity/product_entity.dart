@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
+
 import '../../domain/i_suggestion_model.dart';
 
+@immutable
 class Product implements ISuggestionModel {
   @override
   final String? name;
   final String? companyName;
-  Product({required this.name, required this.companyName});
+  const Product({required this.name, required this.companyName});
 
   factory Product.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
@@ -12,6 +15,13 @@ class Product implements ISuggestionModel {
         name: json['id'].toString(),
         companyName: json['body'],
       );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'companyName': companyName,
+    };
+  }
 
   @override
   bool operator ==(Object other) =>

@@ -1,5 +1,5 @@
-import 'package:point_marketing/src/features/admin/data/entity/mission_entity.dart';
 import 'package:point_marketing/src/features/mission/domain/i_mission_repository.dart';
+import 'package:point_marketing/src/features/mission/domain/mission_entity.dart';
 
 class MissionRepository implements IMissionRepository {
   @override

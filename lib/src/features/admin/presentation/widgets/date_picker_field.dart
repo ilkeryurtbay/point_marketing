@@ -26,9 +26,12 @@ class _DatePickerFieldState extends State<_DatePickerField> {
             ? 'Lütfen bu alanı doldurun'
             : null;
       },
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: AppString.date,
-        suffixIcon: Icon(Icons.calendar_today_outlined),
+        suffixIcon: Icon(
+          Icons.calendar_month,
+          color: context.mainThemeColor,
+        ),
       ),
       readOnly: true,
       onTap: _selectDate,

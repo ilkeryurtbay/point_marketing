@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/entity/product_entity.dart';
+import '../domain/entity/product_entity.dart';
 
 class SelectedProductProvider extends ChangeNotifier {
   late Product? selectedProduct;

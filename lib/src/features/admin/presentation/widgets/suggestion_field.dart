@@ -4,12 +4,14 @@ class SuggestionField<T extends ISuggestionModel> extends StatefulWidget {
   final TextEditingController controller;
   final FutureOr<Iterable<T>> Function(String) getSuggestionMethod;
   final String labelText;
+  final void Function(T?)? onSuggestionSelected;
 
   const SuggestionField({
     Key? key,
     required this.controller,
     required this.getSuggestionMethod,
     required this.labelText,
+    this.onSuggestionSelected,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,6 @@ class _SuggestionFieldState<T extends ISuggestionModel>
         decoration: InputDecoration(
           labelText: widget.labelText,
           suffixIcon: const Icon(Icons.keyboard_arrow_down_outlined),
-          //errorText: 'Lütfen bu alanı doldurun',
         ),
       ),
       suggestionsCallback: widget.getSuggestionMethod,
@@ -49,11 +50,11 @@ class _SuggestionFieldState<T extends ISuggestionModel>
           return const Text('Unexpected error');
         }
       },
-      onSuggestionSelected: (suggestion) {
-        setState(() {
-          widget.controller.text = suggestion?.name ?? '';
-        });
-      },
+      //when the suggestion is selected, if no specific function is given, the name of the suggestion will be shown in the text form field
+      onSuggestionSelected: widget.onSuggestionSelected ??
+          (suggestion) {
+            widget.controller.text = suggestion?.name ?? '';
+          },
       noItemsFoundBuilder: (context) => const SizedBox(),
       debounceDuration: const Duration(milliseconds: 800),
       autoFlipDirection: true,
