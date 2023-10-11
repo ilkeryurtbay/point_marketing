@@ -77,8 +77,10 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     const double scrollBarRadius = 10;
     const double scrollbarThickness = 5;
-    const double addButtonRadius = 8;
+    const double addProductButtonRadius = 8;
     const double productListRadius = 12;
+    final showValidation =
+        Provider.of<ValidationProvider>(context).showValidation;
 
     return Scaffold(
       appBar: AppBar(
@@ -103,16 +105,16 @@ class _AdminPageState extends State<AdminPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _DatePickerField(controller: _dateController),
+                  AppSpace.vertical.space10,
+                  _DatePickerField(
+                    controller: _dateController,
+                  ),
                   AppSpace.vertical.space20,
-                  Consumer<ValidationProvider>(
-                    builder: (context, validationProvider, child) =>
-                        SuggestionField<Market>(
-                      controller: _marketController,
-                      labelText: AppString.market,
-                      getSuggestionMethod: (pattern) =>
-                          getSuggestions<Market>(pattern, Market.fromJson),
-                    ),
+                  SuggestionField<Market>(
+                    controller: _marketController,
+                    labelText: AppString.market,
+                    getSuggestionMethod: (pattern) =>
+                        getSuggestions<Market>(pattern, Market.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField<Company>(
@@ -133,7 +135,8 @@ class _AdminPageState extends State<AdminPage> {
                       AppSpace.horizontal.space10,
                       Expanded(
                         child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius:
+                              BorderRadius.circular(addProductButtonRadius),
                           //add the selected product, which is being held in Selected Product Change Notifier, to the list to show in the list view
                           onTap: () {
                             SelectedProductProvider provider =
@@ -169,8 +172,9 @@ class _AdminPageState extends State<AdminPage> {
                           child: AspectRatio(
                             aspectRatio: 1,
                             child: Container(
-                              decoration:
-                                  _buildRoundedShape(context, addButtonRadius),
+                              decoration: _buildRoundedShape(
+                                  context: context,
+                                  radius: addProductButtonRadius),
                               child: Icon(
                                 Icons.add_outlined,
                                 color: context.outlineColor,
@@ -186,22 +190,44 @@ class _AdminPageState extends State<AdminPage> {
                   AppSpace.vertical.space5,
                   Consumer<SelectedProductProvider>(
                     builder: (context, selectedProduct, child) {
-                      return Container(
-                        height: 240,
-                        decoration:
-                            _buildRoundedShape(context, productListRadius),
-                        child: ListView.builder(
-                          itemCount: selectedProduct.selectedProducts.length,
-                          itemBuilder: (context, index) {
-                            final product =
-                                selectedProduct.selectedProducts[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 6.0, left: 4, right: 4),
-                              child: _ProductTile(product: product),
-                            );
-                          },
-                        ),
+                      final bool showError = showValidation &&
+                          selectedProduct.selectedProducts.isEmpty;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 240,
+                            decoration: _buildRoundedShape(
+                                context: context,
+                                radius: productListRadius,
+                                borderColor: showError
+                                    ? context.colorScheme.error
+                                    : context.outlineColor),
+                            child: ListView.builder(
+                              itemCount:
+                                  selectedProduct.selectedProducts.length,
+                              itemBuilder: (context, index) {
+                                final product =
+                                    selectedProduct.selectedProducts[index];
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 6.0, left: 4, right: 4),
+                                  child: _ProductTile(product: product),
+                                );
+                              },
+                            ),
+                          ),
+                          if (showError) ...[
+                            AppSpace.vertical.space5,
+                            Padding(
+                              padding: AppPadding.onlyLeft16,
+                              child: Text(
+                                'Lütfen tanıtılacak ürün ekleyin',
+                                style: TextStyle(color: context.errorColor),
+                              ),
+                            )
+                          ],
+                        ],
                       );
                     },
                   ),
@@ -245,6 +271,11 @@ class _AdminPageState extends State<AdminPage> {
                           Provider.of<ValidationProvider>(context,
                                   listen: false)
                               .activateAllValidations();
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => const AgentMissionForm(),
+                          //     ));
                         }, //TODO: implement validation and save method
                         child: const Text(AppString.save)),
                   ),
@@ -283,11 +314,15 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
-  ShapeDecoration _buildRoundedShape(BuildContext context, double radius) {
+  ShapeDecoration _buildRoundedShape(
+      {required BuildContext context,
+      required double radius,
+      Color? borderColor}) {
     return ShapeDecoration(
         shape: RoundedRectangleBorder(
             side: BorderSide(
-              color: context.outlineColor,
+              width: borderColor == context.colorScheme.error ? 2 : 1,
+              color: borderColor ?? context.outlineColor,
             ),
             borderRadius: BorderRadius.circular(radius)));
   }

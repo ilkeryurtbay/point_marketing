@@ -23,16 +23,17 @@ class AgentMissionForm extends StatefulWidget {
 }
 
 class _AgentMissionFormState extends State<AgentMissionForm> {
-  final TextEditingController _marketOfficalController =
+  final TextEditingController _marketOfficialController =
       TextEditingController();
-  final TextEditingController _marketAdressController = TextEditingController();
+  final TextEditingController _marketAddressController =
+      TextEditingController();
   final TextEditingController _finishTimeController = TextEditingController();
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _productNumberController =
       TextEditingController();
   final TextEditingController _customerNumberController =
       TextEditingController();
-  final TextEditingController _marketOfficalNotesController =
+  final TextEditingController _marketOfficialNotesController =
       TextEditingController();
   final TextEditingController _agentNotesController = TextEditingController();
 
@@ -73,10 +74,10 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                   ),
                   AppSpace.vertical.space20,
                   marketOfficalSection(
-                      marketOfficalController: _marketOfficalController),
+                      marketOfficalController: _marketOfficialController),
                   AppSpace.vertical.space10,
                   marketAdressSection(
-                      marketAdressController: _marketAdressController),
+                      marketAdressController: _marketAddressController),
                   AppSpace.vertical.space20,
                   const Text("İsim Soyisim : 'isimSoyisim' "),
                   AppSpace.vertical.space20,
@@ -159,7 +160,7 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                     children: [
                       const Expanded(child: Text("Marketçi notları: ")),
                       marketerNotesSection(
-                        controller: _marketOfficalNotesController,
+                        controller: _marketOfficialNotesController,
                         onChanged: (value) {
                           // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
                           print('Marketçi notları: $value');
@@ -182,7 +183,6 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                   ),
                   AppSpace.vertical.space10,
                   ImagePickerPage(),
-                  
                 ],
               ),
             ),
@@ -194,13 +194,13 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
 
   @override
   void dispose() {
-    _marketOfficalController.dispose();
-    _marketAdressController.dispose();
+    _marketOfficialController.dispose();
+    _marketAddressController.dispose();
     _finishTimeController.dispose();
     _startTimeController.dispose();
     _productNumberController.dispose();
     _customerNumberController.dispose();
-    _marketOfficalNotesController.dispose();
+    _marketOfficialNotesController.dispose();
     _agentNotesController.dispose();
     super.dispose();
   }

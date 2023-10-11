@@ -6,4 +6,5 @@ extension BuilContextExtension on BuildContext {
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   Color get mainThemeColor => colorScheme.surface;
   Color get outlineColor => colorScheme.outline;
+  Color get errorColor => colorScheme.error;
 }
