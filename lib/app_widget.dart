@@ -7,6 +7,8 @@ import 'package:point_marketing/core/util/dismiss_keyboard.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
 import 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
+import 'package:point_marketing/src/features/auth/authentication.dart';
+import 'package:point_marketing/src/features/mission/presentation/agent_mission_form.dart';
 import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
@@ -48,7 +50,7 @@ class AppWidget extends StatelessWidget {
               theme: currentTheme == AppThemeMode.light
                   ? AppTheme.lightTheme
                   : AppTheme.darkTheme,
-              home: const AdminPage(),
+              home:  AuthenticationPage()
             ),
           );
         });
