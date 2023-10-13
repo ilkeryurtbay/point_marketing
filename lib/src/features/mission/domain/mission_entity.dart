@@ -1,43 +1,58 @@
 import 'package:flutter/foundation.dart';
-import 'package:point_marketing/src/features/admin/domain/entity/product_entity.dart';
 
 @immutable
 class Mission {
-  final String date;
-  final String marketName;
-  final List<Product> products;
-  final String city;
-  final String country;
-  final String assignedEmployee;
+  final String? id;
+  final String? date;
+  final String? market;
+  final String? company;
+  final List<String>? products;
+  final String? city;
+  final String? country;
+  final bool? isCompleted;
+  final DateTime? timestamp;
+  final String? notes;
 
   const Mission({
+    required this.id,
     required this.date,
-    required this.marketName,
+    required this.market,
+    required this.company,
     required this.products,
-    required this.assignedEmployee,
     required this.city,
     required this.country,
+    required this.isCompleted,
+    required this.timestamp,
+    this.notes,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
       Mission(
+        id: json['id'],
         date: json['date'],
-        marketName: json['market_name'],
+        market: json['market'],
+        company: json['company'],
         products: json['products'],
-        assignedEmployee: json['assigned_employee'],
         city: json['city'],
         country: json['country'],
+        isCompleted: json['is_completed'],
+        timestamp: json['timestamp'],
+        notes: json['notes'],
       );
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'date': date,
-      'market_name': marketName,
-      'products': products.map((product) => product.toJson()).toList(),
+      'market': market,
+      'company': company,
+      'products': products,
       'city': city,
       'country': country,
-      'assigned_agent_name': assignedEmployee,
+      'is_completed': isCompleted,
+      'timestamp': timestamp,
+      'notes': notes,
     };
   }
 
@@ -46,24 +61,28 @@ class Mission {
       identical(this, other) ||
       other is Mission &&
           runtimeType == other.runtimeType &&
+          id == other.id &&
           date == other.date &&
-          marketName == other.marketName &&
+          market == other.market &&
           city == other.city &&
           country == other.country &&
-          assignedEmployee == other.assignedEmployee &&
+          company == other.company &&
+          timestamp == other.timestamp &&
           listEquals(products, other.products);
 
   @override
   int get hashCode =>
+      id.hashCode ^
       date.hashCode ^
-      marketName.hashCode ^
+      market.hashCode ^
       city.hashCode ^
       country.hashCode ^
-      assignedEmployee.hashCode ^
-      products.hashCode;
+      company.hashCode ^
+      isCompleted.hashCode ^
+      timestamp.hashCode;
 
   @override
   String toString() {
-    return 'Mission{date: $date, marketName: $marketName, products: $products, city: $city, country: $country, assignedAgentName: $assignedEmployee}';
+    return 'Mission{id: $id, date: $date, marketName: $market, company: $company, products: $products  city: $city, country: $country, isCompleted: $isCompleted, timestamp: $timestamp, notes: $notes,}';
   }
 }

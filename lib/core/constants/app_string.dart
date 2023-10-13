@@ -16,6 +16,8 @@ class AppString {
   static const String fillEmptyNames =
       'Lütfen firma ve ürün adını boş bırakmayın';
   static const String addProductToPromote = 'Lütfen tanıtılacak ürün ekleyin';
+  static const String employeeNotFound =
+      'Kayıtlı eleman bulunamadı. Lütfen eleman ismini kontrol edin ya da listeden eleman seçin';
 
   //
 }

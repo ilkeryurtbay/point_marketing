@@ -17,4 +17,9 @@ class SelectedProductProvider extends ChangeNotifier {
     selectedProducts.remove(product);
     notifyListeners();
   }
+
+  void clearSelectedProductsList() {
+    selectedProducts = [];
+    notifyListeners();
+  }
 }

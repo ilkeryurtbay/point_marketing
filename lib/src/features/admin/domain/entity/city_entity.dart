@@ -12,5 +12,5 @@ class City implements ISuggestionModel {
           Map<String, dynamic>
               //TODO: Update when Firestore is ready
               json) =>
-      City(name: json['title']);
+      City(name: json['name']);
 }

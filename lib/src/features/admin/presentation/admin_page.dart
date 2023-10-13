@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
 import 'package:point_marketing/core/constants/app_string.dart';
 import 'package:point_marketing/core/util/build_context_extension.dart';
+import 'package:point_marketing/core/util/helpers/firebase_id_getter.dart';
 import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
@@ -18,7 +19,9 @@ import 'package:point_marketing/src/features/admin/domain/entity/employee_entity
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
 import 'package:point_marketing/src/features/admin/presentation/widgets/product_suggestion_field.dart';
 import 'package:point_marketing/src/features/mission/domain/mission_entity.dart';
+import 'package:point_marketing/src/features/mission/presentation/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_padding.dart';
 import '../domain/entity/country_entity.dart';
@@ -86,10 +89,26 @@ class _AdminPageState extends State<AdminPage> {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 100,
         title: const Text(
           AppString.addMission,
         ),
         leading: const _AppBarBackButton(),
+        actions: [
+          TextButton(
+            onPressed: () async => getDocumentIdFromCollection(
+                collectionString: 'countries',
+                fieldNameToBeQueried: 'name',
+                searchPattern: 'türkiye'),
+            // AuthService()
+            // .registerWithEmailAndPassword('alper@mail.com', '123456'),
+            child: const Text('register'),
+          ),
+          TextButton(
+              onPressed: () async => AuthService()
+                  .signInWithEmailAndPassword('alper@mail.com', '123456'),
+              child: const Text('sign in'))
+        ],
       ),
       body: PageScrollBar(
         child: Padding(
@@ -110,14 +129,20 @@ class _AdminPageState extends State<AdminPage> {
                     controller: _marketController,
                     labelText: AppString.market,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<Market>(pattern, Market.fromJson),
+                        _getSuggestionsFromCollection<Market>(
+                            collectionString: 'markets',
+                            fromJson: Market.fromJson,
+                            pattern: pattern),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField<Company>(
                     controller: _companyController,
                     labelText: AppString.company,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions(pattern, Company.fromJson),
+                        _getSuggestionsFromCollection(
+                            pattern: pattern,
+                            collectionString: 'companies',
+                            fromJson: Company.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   Row(
@@ -144,8 +169,8 @@ class _AdminPageState extends State<AdminPage> {
                             //check if one of the names left empty
                             if (companyName.isNotEmpty &&
                                 productName.isNotEmpty) {
-                              provider.selectedProduct = Product(
-                                  name: productName, companyName: companyName);
+                              provider.selectedProduct =
+                                  Product(name: productName);
                             } else {
                               //show snack bar to make the user fill the empty fields
                               _showErrorSnackBar(
@@ -209,7 +234,10 @@ class _AdminPageState extends State<AdminPage> {
                                     selectedProduct.selectedProducts[index];
                                 return Padding(
                                   padding: AppPadding.top6Horizontal4,
-                                  child: _ProductTile(product: product),
+                                  child: _ProductTile(
+                                    product: product,
+                                    companyName: _companyController.text.trim(),
+                                  ),
                                 );
                               },
                             ),
@@ -234,21 +262,32 @@ class _AdminPageState extends State<AdminPage> {
                     controller: _countryController,
                     labelText: AppString.country,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<Country>(pattern, Country.fromJson),
+                        _getSuggestionsFromCollection(
+                            pattern: pattern,
+                            collectionString: 'countries',
+                            fromJson: Country.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField<City>(
                     controller: _cityController,
                     labelText: AppString.city,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<City>(pattern, City.fromJson),
+                        _getSuggestionsFromSubCollection(
+                            pattern: pattern,
+                            parentDocumentName: _countryController.text.trim(),
+                            parentCollectionString: 'countries',
+                            subCollectionString: 'cities',
+                            fromJson: City.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField<Employee>(
                     controller: _employeeController,
                     labelText: AppString.agent,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<Employee>(pattern, Employee.fromJson),
+                        _getSuggestionsFromCollection(
+                            pattern: pattern,
+                            collectionString: 'employees',
+                            fromJson: Employee.fromJson),
                     onSuggestionSelected: (employee) {
                       selectedEmployee = employee;
                       _employeeController.text =
@@ -270,25 +309,84 @@ class _AdminPageState extends State<AdminPage> {
                   AppSpace.vertical.space20,
                   Center(
                     child: ElevatedButton(
-                        onPressed: () {
-                          Provider.of<ValidationProvider>(context,
-                                  listen: false)
-                              .activateAllValidations();
+                        onPressed: () async {
+                          final ValidationProvider validationProvider =
+                              Provider.of<ValidationProvider>(context,
+                                  listen: false);
+                          final selectedProductList = context
+                              .read<SelectedProductProvider>()
+                              .selectedProducts;
+                          //When the button is pressed, auto validation will be active on all fields
+                          validationProvider.activateAllValidations();
 
-                          final Mission mission = Mission(
-                            date: _dateController.text.trim(),
-                            marketName: _marketController.text.trim(),
-                            products: context
-                                .read<SelectedProductProvider>()
-                                .selectedProducts,
-                            assignedEmployee: _employeeController.text.trim(),
-                            city: _cityController.text.trim(),
-                            country: _countryController.text.trim(),
-                          );
+                          //if validation is successful and user selected at least one product, a mission will be formed
+                          if (_formKey.currentState != null &&
+                              _formKey.currentState!.validate() &&
+                              selectedProductList.isNotEmpty) {
+                            final Mission mission = Mission(
+                              id: const Uuid().v4(),
+                              date: _dateController.text.trim(),
+                              market: _marketController.text.trim(),
+                              company: _companyController.text.trim(),
+                              products: context
+                                  .read<SelectedProductProvider>()
+                                  .selectedProducts
+                                  .map((product) => product.name ?? '')
+                                  .toList(),
+                              city: _cityController.text.trim(),
+                              country: _countryController.text.trim(),
+                              isCompleted: false,
+                              timestamp: DateTime.now(),
+                              notes: _noteController.text.trim(),
+                            );
+                            try {
+                              //user can select employee from dropdown list or write employee's name themselves. If they don't write the employee name correctly, the id of the employee cannot be retrieved. employeeId variable will handle that situation.
+                              String? employeeId;
 
-                          FirebaseFirestore.instance
-                              .collection('agents')
-                              .doc(mission.assignedEmployee);
+                              if (selectedEmployee?.id != null) {
+                                //If user selects employee from dropdown list, the id of the employee will come with the selection and be assigned to employeeId, which will later be used to save the mission on database
+                                employeeId = selectedEmployee!.id!;
+                              } else {
+                                //If user writes the employee name themselves, the employee id will be attempted to be retrieved from the database using the employee's name
+                                final querySnapshot = await FirebaseFirestore
+                                    .instance
+                                    .collection('employees')
+                                    .where('name',
+                                        isEqualTo:
+                                            _employeeController.text.trim())
+                                    .get();
+                                final employeeList = querySnapshot.docs
+                                    .map((snapshot) =>
+                                        Employee.fromJson(snapshot.data()))
+                                    .toList();
+                                //If the user wrote the employee name correctly, the employee's id will be assigned to employeeId variable. Otherwise employeeId will still be null.
+                                if (employeeList.isNotEmpty) {
+                                  employeeId = employeeList.first.id;
+                                }
+                              }
+                              //If the user writes the name of the employee correctly or selects the employee from the dropdown list, the mission will be saved to database
+                              if (employeeId != null) {
+                                await FirebaseFirestore.instance
+                                    .collection('employees')
+                                    .doc(employeeId)
+                                    .collection('missions')
+                                    .doc(mission.id)
+                                    .set(mission.toJson());
+                                _clearAllFields();
+                                validationProvider.deactivateAllValidations();
+
+                                //If user did not choose the employee from the dropdown list and wrote employee's name wrong, an error snack bar will be shown
+                              } else {
+                                if (context.mounted) {
+                                  _showErrorSnackBar(
+                                      context: context,
+                                      text: AppString.employeeNotFound);
+                                }
+                              }
+                            } catch (e) {
+                              print(e);
+                            }
+                          }
 
                           // Navigator.push(
                           //     context,
@@ -333,6 +431,89 @@ class _AdminPageState extends State<AdminPage> {
     }
   }
 
+  /// Retrieves a list of suggestions from a Firebase Firestore collection based on a given pattern.
+  ///
+  /// This method queries the specified Firestore collection for documents whose 'name' field
+  /// is greater than or equal to the provided [pattern] and less than the [pattern] followed by 'z'.
+  ///
+  /// The retrieved data is then transformed using the [fromJson] function, which converts the raw
+  /// JSON data of the model from the database into a list of entities.
+  ///
+  /// The resulting list is filtered based on the [pattern], and only relevant suggestions are returned.
+  ///
+  /// Example usage:
+  ///
+  /// ```dart
+  /// final List<YourModel> suggestions = await _getSuggestionsFromCollection<YourModel>(
+  ///   pattern: 'searchPattern',
+  ///   collectionString: 'yourCollectionName',
+  ///   fromJson: (data) => YourModel.fromJson(data),
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// - [pattern]: The search pattern to filter the suggestions.
+  /// - [collectionString]: The name of the Firestore collection to query.
+  /// - [fromJson]: A function to convert raw JSON data into model entities.
+  ///
+  /// Returns a list of suggestions based on the pattern.
+  FutureOr<Iterable<T>>
+      _getSuggestionsFromCollection<T extends ISuggestionModel>(
+          {required String pattern,
+          required String collectionString,
+          required T Function(Map<String, dynamic>) fromJson}) async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection(collectionString)
+          .where('name', isGreaterThanOrEqualTo: pattern)
+          .where('name', isLessThan: '${pattern}z')
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => fromJson(doc.data()))
+          .where((entity) {
+        final entityNameLower = entity.name?.toLowerCase();
+        final patternLower = pattern.toLowerCase();
+        return entityNameLower?.contains(patternLower) ?? false;
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  FutureOr<Iterable<T>>
+      _getSuggestionsFromSubCollection<T extends ISuggestionModel>(
+          {required String pattern,
+          required String parentDocumentName,
+          required String parentCollectionString,
+          required String subCollectionString,
+          required T Function(Map<String, dynamic>) fromJson}) async {
+    try {
+      final String? docId = await getDocumentIdFromCollection(
+          collectionString: parentCollectionString,
+          fieldNameToBeQueried: 'name',
+          searchPattern: parentDocumentName);
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection(parentCollectionString)
+          .doc(docId)
+          .collection(subCollectionString)
+          .where('name', isGreaterThanOrEqualTo: pattern)
+          .where('name', isLessThan: '${pattern}z')
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => fromJson(doc.data()))
+          .where((entity) {
+        final entityNameLower = entity.name?.toLowerCase();
+        final patternLower = pattern.toLowerCase();
+        return entityNameLower?.contains(patternLower) ?? false;
+      }).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
   ShapeDecoration _buildRoundedShape(
       {required BuildContext context,
       required double radius,
@@ -348,7 +529,33 @@ class _AdminPageState extends State<AdminPage> {
 
   void _showErrorSnackBar(
       {required BuildContext context, required String text}) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Center(child: Text(text))));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+      children: [
+        Icon(
+          Icons.error_outline,
+          color: context.errorColor,
+        ),
+        AppSpace.horizontal.space10,
+        Expanded(
+          child: Text(
+            text,
+          ),
+        ),
+      ],
+    )));
+  }
+
+  void _clearAllFields() {
+    _dateController.clear();
+    _marketController.clear();
+    _companyController.clear();
+    _productController.clear();
+    _countryController.clear();
+    _cityController.clear();
+    _noteController.clear();
+    _employeeController.clear();
+    selectedEmployee = null;
+    context.read<SelectedProductProvider>().clearSelectedProductsList();
   }
 }

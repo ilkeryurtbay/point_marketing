@@ -9,5 +9,5 @@ class Country implements ISuggestionModel {
           Map<String, dynamic>
               //TODO: Update when Firestore is ready
               json) =>
-      Country(name: json['title']);
+      Country(name: json['name']);
 }

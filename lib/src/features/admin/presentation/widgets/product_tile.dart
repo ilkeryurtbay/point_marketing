@@ -2,7 +2,8 @@ part of 'package:point_marketing/src/features/admin/presentation/admin_page.dart
 
 class _ProductTile extends StatelessWidget {
   final Product product;
-  const _ProductTile({super.key, required this.product});
+  final String companyName;
+  const _ProductTile({required this.product, required this.companyName});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +19,7 @@ class _ProductTile extends StatelessWidget {
           side: BorderSide(color: context.outlineColor), // Grey border
         ),
         child: ListTile(
-          title: _buildOneLineTextWithEllipsisOverFlow(
-              product.companyName ?? 'Company name could not be retrieved'),
+          title: _buildOneLineTextWithEllipsisOverFlow(companyName),
           subtitle: _buildOneLineTextWithEllipsisOverFlow(
               product.name ?? 'Product name could not be retrieved'),
           trailing: IconButton(

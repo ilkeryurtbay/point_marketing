@@ -6,20 +6,17 @@ import '../../domain/i_suggestion_model.dart';
 class Product implements ISuggestionModel {
   @override
   final String? name;
-  final String? companyName;
-  const Product({required this.name, required this.companyName});
+  const Product({required this.name});
 
   factory Product.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
       Product(
         name: json['id'].toString(),
-        companyName: json['body'],
       );
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'companyName': companyName,
     };
   }
 
@@ -28,12 +25,11 @@ class Product implements ISuggestionModel {
       identical(this, other) ||
       other is Product &&
           runtimeType == other.runtimeType &&
-          name == other.name &&
-          companyName == other.companyName;
+          name == other.name;
 
   @override
-  int get hashCode => name.hashCode ^ companyName.hashCode;
+  int get hashCode => name.hashCode;
 
   @override
-  String toString() => 'Product{name: $name, company name: $companyName}';
+  String toString() => 'Product{name: $name}';
 }
