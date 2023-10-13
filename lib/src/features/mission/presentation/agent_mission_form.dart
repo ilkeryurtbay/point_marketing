@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:point_marketing/core/constants/app_padding.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
+import 'package:point_marketing/core/constants/app_string.dart';
 import 'package:point_marketing/core/util/build_context_extension.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/agentNotesSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/customerAppreciationSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/customerNumberControllerSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/endTimeSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/imagePickerSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/marketAdressSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/marketOfficalSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/marketStandLocationSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/marketerInterestSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/marketerNotesSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/productNumberControlSection.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/startTimeSection.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/market_information_section.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/interestSection.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/notesSection.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/number_control_section.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/time_section.dart';
 
 class AgentMissionForm extends StatefulWidget {
   const AgentMissionForm({super.key});
@@ -27,8 +22,8 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
       TextEditingController();
   final TextEditingController _marketAddressController =
       TextEditingController();
-  final TextEditingController _finishTimeController = TextEditingController();
   final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
   final TextEditingController _productNumberController =
       TextEditingController();
   final TextEditingController _customerNumberController =
@@ -36,6 +31,8 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
   final TextEditingController _marketOfficialNotesController =
       TextEditingController();
   final TextEditingController _agentNotesController = TextEditingController();
+  final TextEditingController _marketerNotesController =
+      TextEditingController();
 
   String? _selectedOption;
   String? _selectedOption2;
@@ -73,33 +70,46 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                     ],
                   ),
                   AppSpace.vertical.space20,
-                  marketOfficalSection(
-                      marketOfficalController: _marketOfficialController),
+                  MarketInformationSection(
+                    labelText: AppString.mOCText,
+                    controller: _marketOfficialController,
+                  ),
                   AppSpace.vertical.space10,
-                  marketAdressSection(
-                      marketAdressController: _marketAddressController),
+                  MarketInformationSection(
+                      labelText: AppString.mACText,
+                      controller: _marketAddressController),
                   AppSpace.vertical.space20,
                   const Text("İsim Soyisim : 'isimSoyisim' "),
                   AppSpace.vertical.space20,
                   const Text("Tanıtılan ürün : 'ürünİsmi' "),
                   AppSpace.vertical.space20,
-                  startTimeSection(startTimeController: _startTimeController),
+                  TimeSection(
+                    labelText: AppString.startTime,
+                    controller: _startTimeController,
+                  ),
                   AppSpace.vertical.space10,
-                  endTimeSetion(finishTimeController: _finishTimeController),
+                  TimeSection(
+                    labelText: AppString.endtTime,
+                    controller: _endTimeController,
+                  ),
                   AppSpace.vertical.space10,
-                  productNumberControlSection(
-                      productNumberController: _productNumberController),
+                  NumberControlSection(
+                    controller: _productNumberController,
+                    labelText: AppString.productNumberText,
+                  ),
                   AppSpace.vertical.space10,
-                  customerNumberControllerSection(
-                      customerNumberController: _customerNumberController),
+                  NumberControlSection(
+                    controller: _customerNumberController,
+                    labelText: AppString.customerNumberText,
+                  ),
                   AppSpace.vertical.space10,
                   Row(
                     children: [
                       const Expanded(
                         flex: 2,
-                        child: Text("Marketçi ilgisi:"),
+                        child: Text(AppString.marketerInterest),
                       ),
-                      marketInterestSection(
+                      InterestSection(
                         selectedOption: _selectedOption,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -118,9 +128,9 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                     children: [
                       const Expanded(
                         flex: 2,
-                        child: Text("Müşteri beğenisi:"),
+                        child: Text(AppString.consumerInterest),
                       ),
-                      customerAppreciationSaction(
+                      InterestSection(
                         selectedOption: _selectedOption2,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -139,9 +149,9 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                     children: [
                       const Expanded(
                         flex: 2,
-                        child: Text("Market stand yeri:"),
+                        child: Text(AppString.marketStandLocation),
                       ),
-                      marketStandLocationSection(
+                      InterestSection(
                         selectedOption: _selectedOption3,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -156,30 +166,16 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                     ],
                   ),
                   AppSpace.vertical.space10,
-                  Row(
-                    children: [
-                      const Expanded(child: Text("Marketçi notları: ")),
-                      marketerNotesSection(
-                        controller: _marketOfficialNotesController,
-                        onChanged: (value) {
-                          // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
-                          print('Marketçi notları: $value');
-                        },
-                      ),
-                    ],
+                  NotesSection(
+                    controller: _marketerNotesController,
+                    onChanged: (String value) {},
+                    labelText: AppString.marketerNotes,
                   ),
                   AppSpace.vertical.space10,
-                  Row(
-                    children: [
-                      const Expanded(child: Text("Eleman notları: ")),
-                      agentNotesSection(
-                        controller: _agentNotesController,
-                        onChanged: (value) {
-                          // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
-                          print('Eleman notları: $value');
-                        },
-                      ),
-                    ],
+                  NotesSection(
+                    controller: _marketerNotesController,
+                    onChanged: (String value) {},
+                    labelText: AppString.agentNotes,
                   ),
                   AppSpace.vertical.space10,
                   ImagePickerPage(),
@@ -196,12 +192,14 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
   void dispose() {
     _marketOfficialController.dispose();
     _marketAddressController.dispose();
-    _finishTimeController.dispose();
     _startTimeController.dispose();
+    _endTimeController.dispose();
     _productNumberController.dispose();
     _customerNumberController.dispose();
     _marketOfficialNotesController.dispose();
     _agentNotesController.dispose();
+    _agentNotesController.dispose();
+    _marketAddressController.dispose();
     super.dispose();
   }
 }

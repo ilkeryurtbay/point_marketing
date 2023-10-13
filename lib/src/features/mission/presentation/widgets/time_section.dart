@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class startTimeSection extends StatelessWidget {
-  const startTimeSection({
-    super.key,
-    required TextEditingController startTimeController,
-  }) : _startTimeController = startTimeController;
+class TimeSection extends StatelessWidget {
 
-  final TextEditingController _startTimeController;
+  final String labelText;
+  final TextEditingController controller;
+
+  const TimeSection({
+    super.key,
+    required this.labelText,
+    required this.controller, 
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Text("Başlama Saati:")),
+         Expanded(child: Text(labelText),),
         Expanded(
           child: TextField(
-            controller: _startTimeController,
+            controller: controller,
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,

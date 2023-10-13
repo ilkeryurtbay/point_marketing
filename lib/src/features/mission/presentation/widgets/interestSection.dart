@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class marketInterestSection extends StatefulWidget {
+class InterestSection extends StatefulWidget {
   final String? selectedOption;
   final ValueChanged<String?> onChanged;
 
-  marketInterestSection({
+  InterestSection({
     required this.selectedOption,
     required this.onChanged,
   });
 
   @override
-  _marketInterestSectionState createState() => _marketInterestSectionState();
+  _InterestSectionState createState() => _InterestSectionState();
 }
 
-class _marketInterestSectionState extends State<marketInterestSection> {
+class _InterestSectionState extends State<InterestSection> {
   @override
   Widget build(BuildContext context) {
     return Expanded(

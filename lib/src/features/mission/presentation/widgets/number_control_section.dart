@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class customerNumberControllerSection extends StatelessWidget {
-  const customerNumberControllerSection({
-    super.key,
-    required TextEditingController customerNumberController,
-  }) : _customerNumberController = customerNumberController;
+class NumberControlSection extends StatelessWidget {
+  final String labelText;
+  final TextEditingController controller;
 
-  final TextEditingController _customerNumberController;
+  const NumberControlSection({
+    super.key,
+    required this.labelText,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Text("Kaç müşteri ile görüşüldü:")),
+        Expanded(child: Text(labelText)),
         Expanded(
           child: TextField(
-            controller: _customerNumberController,
+            controller: controller,
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
