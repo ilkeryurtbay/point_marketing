@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:point_marketing/core/constants/app_padding.dart';
 import 'package:point_marketing/core/constants/app_space.dart';
 import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
-import 'package:point_marketing/src/features/mission/presentation/widgets/agent_notes_section.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/customerAppreciationSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/customerNumberControllerSection.dart';
+import 'package:point_marketing/src/features/mission/presentation/widgets/employee_notes_section.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/endTimeSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/imagePickerSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/marketAdressSection.dart';
@@ -15,14 +15,14 @@ import 'package:point_marketing/src/features/mission/presentation/widgets/market
 import 'package:point_marketing/src/features/mission/presentation/widgets/productNumberControlSection.dart';
 import 'package:point_marketing/src/features/mission/presentation/widgets/startTimeSection.dart';
 
-class AgentMissionForm extends StatefulWidget {
-  const AgentMissionForm({super.key});
+class EmployeeMissionForm extends StatefulWidget {
+  const EmployeeMissionForm({super.key});
 
   @override
-  State<AgentMissionForm> createState() => _AgentMissionFormState();
+  State<EmployeeMissionForm> createState() => _EmployeeMissionFormState();
 }
 
-class _AgentMissionFormState extends State<AgentMissionForm> {
+class _EmployeeMissionFormState extends State<EmployeeMissionForm> {
   final TextEditingController _marketOfficialController =
       TextEditingController();
   final TextEditingController _marketAddressController =
@@ -35,7 +35,8 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
       TextEditingController();
   final TextEditingController _marketOfficialNotesController =
       TextEditingController();
-  final TextEditingController _agentNotesController = TextEditingController();
+  final TextEditingController _employeeNotesController =
+      TextEditingController();
 
   String? _selectedOption;
   String? _selectedOption2;
@@ -166,8 +167,8 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
                   Row(
                     children: [
                       const Expanded(child: Text("Eleman notları: ")),
-                      agentNotesSection(
-                        controller: _agentNotesController,
+                      EmployeeNotesSection(
+                        controller: _employeeNotesController,
                         onChanged: (value) {
                           // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
                           print('Eleman notları: $value');
@@ -195,7 +196,7 @@ class _AgentMissionFormState extends State<AgentMissionForm> {
     _productNumberController.dispose();
     _customerNumberController.dispose();
     _marketOfficialNotesController.dispose();
-    _agentNotesController.dispose();
+    _employeeNotesController.dispose();
     super.dispose();
   }
 }

@@ -10,7 +10,7 @@ class AppString {
   static const String notes = 'Notlar';
   static const String addNotes = 'Not ekleyin...';
   static const String save = 'Kaydet';
-  static const String agent = 'Eleman';
+  static const String employee = 'Eleman';
   static const String chosenProducts = 'Seçilen Ürünler';
   static const String productAlreadyAdded = 'Bu ürünü zaten eklediniz';
   static const String fillEmptyNames =

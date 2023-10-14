@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-class agentNotesSection extends StatelessWidget {
+class EmployeeNotesSection extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
 
-  agentNotesSection({
+  const EmployeeNotesSection({
+    super.key,
     required this.controller,
     required this.onChanged,
   });

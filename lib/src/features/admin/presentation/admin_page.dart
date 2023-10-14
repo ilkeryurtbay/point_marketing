@@ -11,15 +11,15 @@ import 'package:point_marketing/core/util/build_context_extension.dart';
 import 'package:point_marketing/src/common_widgets/page_scroll_bar.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
-import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/city_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/company_entity.dart';
+import 'package:point_marketing/src/features/admin/data/entity/employee_entity.dart';
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
 import 'package:point_marketing/src/features/admin/presentation/widgets/product_suggestion_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/app_padding.dart';
-import '../../mission/presentation/agent_mission_form.dart';
+import '../../mission/presentation/employee_mission_form.dart';
 import '../data/entity/country_entity.dart';
 import '../data/entity/market_entity.dart';
 import '../data/entity/product_entity.dart';
@@ -46,7 +46,7 @@ class _AdminPageState extends State<AdminPage> {
   late TextEditingController _countryController;
   late TextEditingController _cityController;
   late TextEditingController _noteController;
-  late TextEditingController _agentController;
+  late TextEditingController _employeeController;
 
   @override
   void initState() {
@@ -59,7 +59,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController = TextEditingController();
     _cityController = TextEditingController();
     _noteController = TextEditingController();
-    _agentController = TextEditingController();
+    _employeeController = TextEditingController();
   }
 
   @override
@@ -71,7 +71,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController.dispose();
     _cityController.dispose();
     _noteController.dispose();
-    _agentController.dispose();
+    _employeeController.dispose();
     super.dispose();
   }
 
@@ -243,10 +243,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField(
-                    controller: _agentController,
-                    labelText: AppString.agent,
+                    controller: _employeeController,
+                    labelText: AppString.employee,
                     getSuggestionMethod: (pattern) =>
-                        _getSuggestions<Agent>(pattern, Agent.fromJson),
+                        _getSuggestions<Employee>(pattern, Employee.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   TextField(
@@ -270,7 +270,8 @@ class _AdminPageState extends State<AdminPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const AgentMissionForm(),
+                                builder: (context) =>
+                                    const EmployeeMissionForm(),
                               ));
                         }, //TODO: implement validation and save method
                         child: const Text(AppString.save)),

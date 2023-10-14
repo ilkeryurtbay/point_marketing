@@ -7,7 +7,7 @@ class ValidationProvider extends ChangeNotifier {
   bool isProductListValid = false;
   bool isCountryValid = false;
   bool isCityValid = false;
-  bool isAgentValid = false;
+  bool isEmployeeValid = false;
 
   void validateIfFieldIsEmpty({
     required String? input,
