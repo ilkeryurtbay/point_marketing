@@ -1,12 +1,12 @@
 part of 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
 
-class SuggestionField<T extends ISuggestionModel> extends StatefulWidget {
+class _SuggestionField<T extends ISuggestionModel> extends StatefulWidget {
   final TextEditingController controller;
   final FutureOr<Iterable<T>> Function(String) getSuggestionMethod;
   final String labelText;
   final void Function(T?)? onSuggestionSelected;
 
-  const SuggestionField({
+  const _SuggestionField({
     Key? key,
     required this.controller,
     required this.getSuggestionMethod,
@@ -15,11 +15,11 @@ class SuggestionField<T extends ISuggestionModel> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SuggestionField<T>> createState() => _SuggestionFieldState<T>();
+  State<_SuggestionField<T>> createState() => _SuggestionFieldState<T>();
 }
 
 class _SuggestionFieldState<T extends ISuggestionModel>
-    extends State<SuggestionField<T>> {
+    extends State<_SuggestionField<T>> {
   @override
   Widget build(BuildContext context) {
     bool showValidation =

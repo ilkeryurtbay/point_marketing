@@ -11,7 +11,7 @@ class Product implements ISuggestionModel {
   factory Product.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
       Product(
-        name: json['id'].toString(),
+        name: json['name'].toString(),
       );
 
   Map<String, dynamic> toJson() {
