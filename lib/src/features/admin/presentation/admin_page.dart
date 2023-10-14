@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart' as http;
@@ -16,12 +15,10 @@ import 'package:point_marketing/src/features/admin/data/entity/company_entity.da
 import 'package:point_marketing/src/features/admin/domain/i_suggestion_model.dart';
 import 'package:point_marketing/src/features/admin/presentation/widgets/product_suggestion_field.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/constants/app_padding.dart';
 import '../data/entity/country_entity.dart';
 import '../data/entity/market_entity.dart';
 import '../data/entity/product_entity.dart';
-
 part 'package:point_marketing/src/features/admin/presentation/widgets/app_bar_back_button.dart';
 part 'package:point_marketing/src/features/admin/presentation/widgets/check_circle.dart';
 part 'package:point_marketing/src/features/admin/presentation/widgets/date_picker_field.dart';
@@ -44,7 +41,7 @@ class _AdminPageState extends State<AdminPage> {
   late TextEditingController _countryController;
   late TextEditingController _cityController;
   late TextEditingController _noteController;
-  late TextEditingController _agentController;
+  late TextEditingController _employeController;
 
   @override
   void initState() {
@@ -57,7 +54,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController = TextEditingController();
     _cityController = TextEditingController();
     _noteController = TextEditingController();
-    _agentController = TextEditingController();
+    _employeController = TextEditingController();
   }
 
   @override
@@ -69,7 +66,7 @@ class _AdminPageState extends State<AdminPage> {
     _countryController.dispose();
     _cityController.dispose();
     _noteController.dispose();
-    _agentController.dispose();
+    _employeController.dispose();
     super.dispose();
   }
 
@@ -247,10 +244,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                   AppSpace.vertical.space20,
                   SuggestionField(
-                    controller: _agentController,
-                    labelText: AppString.agent,
+                    controller: _employeController,
+                    labelText: AppString.employe,
                     getSuggestionMethod: (pattern) =>
-                        getSuggestions<Agent>(pattern, Agent.fromJson),
+                        getSuggestions<employe>(pattern, employe.fromJson),
                   ),
                   AppSpace.vertical.space20,
                   TextField(
@@ -274,7 +271,7 @@ class _AdminPageState extends State<AdminPage> {
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
-                          //       builder: (context) => const AgentMissionForm(),
+                          //       builder: (context) => const employeMissionForm(),
                           //     ));
                         }, //TODO: implement validation and save method
                         child: const Text(AppString.save)),

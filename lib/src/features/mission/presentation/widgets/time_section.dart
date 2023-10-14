@@ -1,41 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:point_marketing/src/features/mission/application/form_validator.dart';
 
 class TimeSection extends StatelessWidget {
-
-  final String labelText;
   final TextEditingController controller;
 
+  final String labelText;
+
   const TimeSection({
-    super.key,
+    Key? key,
+    required this.controller,
     required this.labelText,
-    required this.controller, 
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-         Expanded(child: Text(labelText),),
-        Expanded(
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(4),
-              _TimeInputFormatter(),
-            ],
-            decoration: const InputDecoration(
-              hintText: '00:00 - 23:59',
-            ),
-            onChanged: (value) {
-              // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
-              print('Girilen saat: $value');
-            },
-          ),
-        )
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(4),
+        _TimeInputFormatter(),
       ],
+      decoration:  InputDecoration(
+        labelText: labelText ,
+      ),
+      validator: (value) => nonEmptyValidator(value),
+      onChanged: (value) {
+        // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
+        print('Girilen saat: $value');
+      },
     );
   }
 }
@@ -43,7 +38,9 @@ class TimeSection extends StatelessWidget {
 class _TimeInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final text = newValue.text;
 
     var newText = '';

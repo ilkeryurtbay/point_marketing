@@ -1,22 +1,22 @@
 import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
 import 'package:point_marketing/src/features/agent/domain/i_agent_repository.dart';
 
-class AgentRepository implements IAgentRepository {
+class employeRepository implements IemployeRepository {
   @override
-  Future<void> createAgent({required Agent agent}) {
-    // TODO: implement createAgent
+  Future<void> createemploye({required employe employe}) {
+    // TODO: implement createemploye
     throw UnimplementedError();
   }
 
   @override
-  Future<void> deleteAgent({required Agent agent}) {
-    // TODO: implement deleteAgent
+  Future<void> deleteemploye({required employe employe}) {
+    // TODO: implement deleteemploye
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateAgent({required Agent agent}) {
-    // TODO: implement updateAgent
+  Future<void> updateemploye({required employe employe}) {
+    // TODO: implement updateemploye
     throw UnimplementedError();
   }
 }

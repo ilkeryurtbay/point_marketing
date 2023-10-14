@@ -4,13 +4,13 @@ class Mission {
   final String date;
   final String marketName;
   final List<Product> products;
-  final String assignedAgentName;
+  final String assignedemployeName;
 
   Mission({
     required this.date,
     required this.marketName,
     required this.products,
-    required this.assignedAgentName,
+    required this.assignedemployeName,
   });
 
   factory Mission.fromJson(Map<String, dynamic> json) =>
@@ -19,5 +19,5 @@ class Mission {
           date: json['date'],
           marketName: json['market_name'],
           products: json['products'],
-          assignedAgentName: json['assigned_agent_name']);
+          assignedemployeName: json['assigned_employe_name']);
 }
