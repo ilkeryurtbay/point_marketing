@@ -388,8 +388,8 @@ class _AdminPageState extends State<AdminPage> {
                                       text: AppString.employeeNotFound);
                                 }
                               }
-                            } catch (e) {
-                              print(e);
+                            } catch (_) {
+                              //TODO: handle errors
                             }
                           }
 
