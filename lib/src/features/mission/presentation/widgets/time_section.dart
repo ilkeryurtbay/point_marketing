@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:point_marketing/src/features/mission/application/form_validator.dart';
 
-class startTimeSection extends StatelessWidget {
-  const startTimeSection({
-    super.key,
-    required TextEditingController startTimeController,
-  }) : _startTimeController = startTimeController;
+class TimeSection extends StatelessWidget {
+  final TextEditingController controller;
 
-  final TextEditingController _startTimeController;
+  final String labelText;
+
+  const TimeSection({
+    Key? key,
+    required this.controller,
+    required this.labelText,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Text("Başlama Saati:")),
-        Expanded(
-          child: TextField(
-            controller: _startTimeController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-              LengthLimitingTextInputFormatter(4),
-              _TimeInputFormatter(),
-            ],
-            decoration: const InputDecoration(
-              hintText: '00:00 - 23:59',
-            ),
-            onChanged: (value) {
-              // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
-              print('Girilen saat: $value');
-            },
-          ),
-        )
+    return TextFormField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(4),
+        _TimeInputFormatter(),
       ],
+      decoration:  InputDecoration(
+        labelText: labelText ,
+      ),
+      validator: (value) => nonEmptyValidator(value),
+      onChanged: (value) {
+        // Girilen değeri kullanmak için burada işlem yapabilirsiniz.
+        print('Girilen saat: $value');
+      },
     );
   }
 }
@@ -40,7 +38,9 @@ class startTimeSection extends StatelessWidget {
 class _TimeInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final text = newValue.text;
 
     var newText = '';

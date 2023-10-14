@@ -1,11 +1,11 @@
 import '../../domain/i_suggestion_model.dart';
 
-class Agent implements ISuggestionModel {
+class employe implements ISuggestionModel {
   @override
   final String? name;
-  Agent({required this.name});
+  employe({required this.name});
 
-  factory Agent.fromJson(Map<String, dynamic> json) =>
+  factory employe.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
-      Agent(name: json['title']);
+      employe(name: json['title']);
 }

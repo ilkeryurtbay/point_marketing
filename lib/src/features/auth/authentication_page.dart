@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:point_marketing/src/features/auth/presentation/widgets/singinSection.dart';
-import 'package:point_marketing/src/features/auth/presentation/widgets/vectorsSection.dart';
+import 'package:point_marketing/src/features/auth/presentation/widgets/sing_in_section.dart';
+import 'package:point_marketing/src/features/auth/presentation/widgets/vectors_section.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key? key}) : super(key: key);
@@ -20,9 +20,9 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            vectorsSection(),
+            VectorsSection(),
             Image.asset("assets/pointlogo.png"),
-            singInSection(formKey: _formKey, emailController: _emailController, passwordController: _passwordController),
+            SignInSection(formKey: _formKey, emailController: _emailController, passwordController: _passwordController),
           ],
         ),
       ),

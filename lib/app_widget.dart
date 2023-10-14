@@ -6,9 +6,9 @@ import 'package:point_marketing/core/theme/app_theme_provider.dart';
 import 'package:point_marketing/core/util/dismiss_keyboard.dart';
 import 'package:point_marketing/src/features/admin/application/selected_product_provider.dart';
 import 'package:point_marketing/src/features/admin/application/validation_provider.dart';
-import 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
-import 'package:point_marketing/src/features/auth/authentication.dart';
-import 'package:point_marketing/src/features/mission/presentation/agent_mission_form.dart';
+// import 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
+import 'package:point_marketing/src/features/auth/authentication_page.dart';
+import 'package:point_marketing/src/features/mission/presentation/agent_mission_form_page.dart';
 import 'package:provider/provider.dart';
 
 class AppWidget extends StatelessWidget {
@@ -50,7 +50,7 @@ class AppWidget extends StatelessWidget {
               theme: currentTheme == AppThemeMode.light
                   ? AppTheme.lightTheme
                   : AppTheme.darkTheme,
-              home:  AuthenticationPage()
+              home:  employeMissionForm()
             ),
           );
         });

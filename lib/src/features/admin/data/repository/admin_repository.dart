@@ -1,4 +1,4 @@
-import 'package:point_marketing/src/features/admin/data/entity/agent_entity.dart';
+import 'package:point_marketing/src/features/admin/data/entity/employe_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/company_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/market_entity.dart';
 import 'package:point_marketing/src/features/admin/data/entity/mission_entity.dart';
@@ -7,8 +7,8 @@ import 'package:point_marketing/src/features/admin/domain/i_admin_repository.dar
 
 class AdminRepository implements IAdminRepository {
   @override
-  Future<void> createAgent({required Agent agent}) {
-    // TODO: implement createAgent
+  Future<void> createemploye({required employe employe}) {
+    // TODO: implement createemploye
     throw UnimplementedError();
   }
 
@@ -19,8 +19,8 @@ class AdminRepository implements IAdminRepository {
   }
 
   @override
-  Future<void> deleteAgent({required Agent agent}) {
-    // TODO: implement deleteAgent
+  Future<void> deleteemploye({required employe employe}) {
+    // TODO: implement deleteemploye
     throw UnimplementedError();
   }
 
@@ -31,8 +31,8 @@ class AdminRepository implements IAdminRepository {
   }
 
   @override
-  Future<List<Agent>> getAgentList() {
-    // TODO: implement getAgentList
+  Future<List<employe>> getemployeList() {
+    // TODO: implement getemployeList
     throw UnimplementedError();
   }
 
@@ -55,8 +55,8 @@ class AdminRepository implements IAdminRepository {
   }
 
   @override
-  Future<void> updateAgent({required Agent agent}) {
-    // TODO: implement updateAgent
+  Future<void> updateemploye({required employe employe}) {
+    // TODO: implement updateemploye
     throw UnimplementedError();
   }
 
