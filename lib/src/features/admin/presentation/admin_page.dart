@@ -350,7 +350,9 @@ class _AdminPageState extends State<AdminPage> {
                               //user can select employee from dropdown list or write employee's name themselves. If they don't write the employee name correctly, the id of the employee cannot be retrieved. employeeId variable will handle that situation.
                               String? employeeId;
 
-                              if (selectedEmployee?.id != null) {
+                              if (selectedEmployee?.id != null &&
+                                  selectedEmployee?.name ==
+                                      _employeeController.text.trim()) {
                                 //If user selects employee from dropdown list, the id of the employee will come with the selection and be assigned to employeeId, which will later be used to save the mission on database
                                 employeeId = selectedEmployee!.id!;
                               } else {
