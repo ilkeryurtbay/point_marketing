@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:point_marketing/core/constants/app_padding.dart';
+
 class ImagePickerPage extends StatefulWidget {
+  const ImagePickerPage({super.key});
+
   @override
   _ImagePickerPageState createState() => _ImagePickerPageState();
 }
@@ -38,21 +42,41 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
             final int index = entry.key;
             final File? image = entry.value;
 
-            return Stack(
-              alignment: Alignment.topRight,
-              children: <Widget>[
-                if (image != null)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.file(image, width: 100, height: 100),
-                  )
-                else
-                  Container(), // Görsel yoksa boş bir konteyner
-                IconButton(
-                  icon: Icon(Icons.close, color: Colors.red),
-                  onPressed: () => _removeImage(index),
-                ),
-              ],
+            return Container(
+              alignment: Alignment.center,
+              height: MediaQuery.of(context).size.height / 5,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.grey[350], // Gri arkaplan rengi
+                borderRadius:
+                    BorderRadius.circular(10.0), // Köşeleri oval yapar
+              ),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: <Widget>[
+                  if (image != null)
+                    Padding(
+                      padding: AppPadding.verticalSymmetric8,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: Image.file(
+                          image,
+                          fit: BoxFit.cover, // Görüntüyü Container'a sığdır
+                        ),
+                      ),
+                    ),
+                  GestureDetector(
+                    onTap: () => _removeImage(index),
+                    child: Container(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }).toList(),
         ),

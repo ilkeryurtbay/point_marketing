@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class vectorsSection extends StatelessWidget {
-  const vectorsSection({
+class VectorsSection extends StatelessWidget {
+  const VectorsSection({
     super.key,
   });
 
