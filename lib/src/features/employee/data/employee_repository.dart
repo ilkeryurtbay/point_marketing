@@ -1,5 +1,6 @@
-import 'package:point_marketing/src/features/admin/data/entity/employee_entity.dart';
 import 'package:point_marketing/src/features/employee/domain/i_employee_repository.dart';
+
+import '../../admin/domain/entity/employee_entity.dart';
 
 class EmployeeRepository implements IEmployeeRepository {
   @override

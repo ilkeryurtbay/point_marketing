@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../data/entity/product_entity.dart';
+import '../domain/entity/product_entity.dart';
 
 class SelectedProductProvider extends ChangeNotifier {
   late Product? selectedProduct;
@@ -15,6 +15,11 @@ class SelectedProductProvider extends ChangeNotifier {
 
   void removeProductFromList(Product product) {
     selectedProducts.remove(product);
+    notifyListeners();
+  }
+
+  void clearSelectedProductsList() {
+    selectedProducts = [];
     notifyListeners();
   }
 }

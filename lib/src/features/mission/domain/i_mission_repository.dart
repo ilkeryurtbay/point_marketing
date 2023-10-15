@@ -1,4 +1,4 @@
-import '../../admin/data/entity/mission_entity.dart';
+import 'mission_entity.dart';
 
 abstract class IMissionRepository {
   Future<void> createMission({required Mission mission});

@@ -1,25 +1,21 @@
-import 'dart:async';
-import 'dart:convert';
+part of 'package:point_marketing/src/features/admin/presentation/admin_page.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:http/http.dart' as http;
-import 'package:point_marketing/core/constants/app_string.dart';
-import 'package:point_marketing/src/features/admin/data/entity/product_entity.dart';
-
-class ProductSuggestionField extends StatefulWidget {
+class _ProductSuggestionField extends StatefulWidget {
   final TextEditingController controller;
+  final FutureOr<Iterable<Product>> Function(String) getSuggestionMethod;
 
-  const ProductSuggestionField({
+  const _ProductSuggestionField({
     Key? key,
     required this.controller,
+    required this.getSuggestionMethod,
   }) : super(key: key);
 
   @override
-  State<ProductSuggestionField> createState() => _ProductSuggestionFieldState();
+  State<_ProductSuggestionField> createState() =>
+      _ProductSuggestionFieldState();
 }
 
-class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
+class _ProductSuggestionFieldState extends State<_ProductSuggestionField> {
   @override
   Widget build(BuildContext context) {
     return TypeAheadField<Product?>(
@@ -27,9 +23,9 @@ class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
           controller: widget.controller,
           decoration: const InputDecoration(
             labelText: AppString.product,
+            suffixIcon: Icon(Icons.keyboard_arrow_down_outlined),
           )),
-      suggestionsCallback: (pattern) =>
-          _getProductSuggestions(pattern, Product.fromJson),
+      suggestionsCallback: widget.getSuggestionMethod,
       itemBuilder: (context, suggestion) {
         if (suggestion != null) {
           return ListTile(
@@ -48,28 +44,5 @@ class _ProductSuggestionFieldState extends State<ProductSuggestionField> {
       noItemsFoundBuilder: (context) => const SizedBox(),
       debounceDuration: const Duration(milliseconds: 800),
     );
-  }
-
-  FutureOr<Iterable<Product>> _getProductSuggestions(
-      String pattern, Product Function(Map<String, dynamic>) fromJson) async {
-    //TODO:Update the data source when firebase is ready!
-    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final List dataOfProducts = json.decode(response.body);
-
-      return dataOfProducts.map((json) => fromJson(json)).where((product) {
-        final productNameLower = product.name?.toLowerCase();
-        final patternLower = pattern.toLowerCase();
-
-        return productNameLower?.contains(patternLower) ?? false;
-      }).toList();
-    } else if (response.statusCode == 400) {
-      //TODO: Handle exceptions
-      throw Exception('No internet connection');
-    } else {
-      throw Exception('Unexpected Error');
-    }
   }
 }

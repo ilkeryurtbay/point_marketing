@@ -7,5 +7,5 @@ class Market implements ISuggestionModel {
 
   factory Market.fromJson(Map<String, dynamic> json) =>
       //TODO: Update when Firestore is ready
-      Market(name: json['title']);
+      Market(name: json['name']);
 }

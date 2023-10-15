@@ -1,4 +1,4 @@
-import '../../admin/data/entity/employee_entity.dart';
+import '../../admin/domain/entity/employee_entity.dart';
 
 abstract class IEmployeeRepository {
   Future<void> createEmployee({required Employee employee});

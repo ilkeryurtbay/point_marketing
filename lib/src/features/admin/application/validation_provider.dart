@@ -26,6 +26,11 @@ class ValidationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deactivateAllValidations() {
+    showValidation = false;
+    notifyListeners();
+  }
+
   void activateFieldValidation({
     required String? input,
     required Function(bool) updateFieldValidator,
